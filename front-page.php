@@ -12,7 +12,7 @@ while ( have_posts() ) :
 
     $hero_image = get_the_post_thumbnail_url( get_the_ID(), 'full' );
     if ( ! $hero_image ) {
-        $hero_image = 'https://wordpress-1476123-6617325.cloudwaysapps.com/wp-content/uploads/2026/08/763018716_122104309185419437_8310539191905664210_n.jpg';
+        $hero_image = 'https://beneath-our-feet.com/wp-content/uploads/2026/08/763018716_122104309185419437_8310539191905664210_n.jpg';
     }
 
     $hero_copy = has_excerpt()
