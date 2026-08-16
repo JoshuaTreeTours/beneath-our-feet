@@ -292,7 +292,7 @@ $bof_search_url = static function ( $term ) {
         <h2 id="bof-menu-places">Explore Places</h2>
         <ul>
             <li><a href="<?php echo $bof_search_url( 'Places' ); ?>">Places</a></li>
-            <li><a href="<?php echo $bof_search_url( 'National Parks' ); ?>">National Parks</a></li>
+            <li><a href="<?php echo esc_url( home_url( '/national-parks/' ) ); ?>">National Parks</a></li>
             <li><a href="<?php echo $bof_search_url( 'Santa Barbara' ); ?>">Santa Barbara Geology</a></li>
             <li><a href="<?php echo $bof_search_url( 'Colorado Plateau' ); ?>">Colorado Plateau</a></li>
             <li><a href="<?php echo $bof_search_url( 'California geology' ); ?>">California Geology</a></li>
