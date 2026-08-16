@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php wp_head(); ?>
     <?php if ( is_front_page() ) : ?>
-    <style id="bof-mobile-home-hero-v3">
+    <style id="bof-mobile-home-hero-v4">
         .bof-mobile-home-hero { display: none; }
         @media (max-width: 780px) {
             .bof-mobile-home-hero {
@@ -14,15 +14,16 @@
                 max-width: none !important;
                 margin: 0 calc(50% - 50vw) !important;
                 padding: 0 !important;
-                background: #000;
+                background: #efe0bf;
                 overflow: hidden;
             }
             .bof-mobile-home-hero img {
                 display: block !important;
                 width: 100% !important;
+                max-width: none !important;
                 height: auto !important;
-                aspect-ratio: 720 / 332;
-                object-fit: cover;
+                aspect-ratio: auto !important;
+                object-fit: contain !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
@@ -65,12 +66,21 @@
 </header>
 <main class="site-main">
 <?php if ( is_front_page() ) : ?>
+    <?php
+    $bof_mobile_hero_b64 = '';
+    for ( $bof_mobile_hero_part = 1; $bof_mobile_hero_part <= 10; $bof_mobile_hero_part++ ) {
+        $bof_mobile_hero_path = get_stylesheet_directory() . '/assets/mobile-hero.b64.' . $bof_mobile_hero_part;
+        if ( is_readable( $bof_mobile_hero_path ) ) {
+            $bof_mobile_hero_b64 .= trim( file_get_contents( $bof_mobile_hero_path ) );
+        }
+    }
+    ?>
     <div class="bof-mobile-home-hero" aria-label="Beneath Our Feet mobile hero">
         <img
-            src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/hero-landscape.svg?v=3' ); ?>"
+            src="data:image/jpeg;base64,<?php echo esc_attr( $bof_mobile_hero_b64 ); ?>"
             alt="Beneath Our Feet — geology, deep time, and Earth's story"
-            width="720"
-            height="332"
+            width="480"
+            height="853"
             decoding="async"
             fetchpriority="high"
         >
