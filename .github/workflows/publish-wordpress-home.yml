@@ -8,6 +8,7 @@ on:
     paths:
       - 'content/homepage.html'
       - 'content/homepage-excerpt.txt'
+      - '.github/workflows/publish-wordpress-home.yml'
 
 permissions:
   contents: read
@@ -30,7 +31,6 @@ jobs:
           import json
           import os
           import sys
-          import urllib.parse
           import urllib.request
 
           base = os.environ['WP_BASE_URL'].rstrip('/')
@@ -46,15 +46,11 @@ jobs:
 
           lookup_url = f"{base}/wp-json/wp/v2/pages?slug=home&context=edit&per_page=1"
           request = urllib.request.Request(lookup_url, headers=headers)
-          try:
-              with urllib.request.urlopen(request, timeout=30) as response:
-                  pages = json.load(response)
-          except Exception as exc:
-              print(f'Could not authenticate to WordPress or find pages: {exc}', file=sys.stderr)
-              raise
+          with urllib.request.urlopen(request, timeout=30) as response:
+              pages = json.load(response)
 
           if not pages:
-              raise SystemExit('No published WordPress page with slug "home" was found.')
+              raise SystemExit('No WordPress page with slug "home" was found.')
 
           page_id = pages[0]['id']
           with open('content/homepage.html', 'r', encoding='utf-8') as fh:
@@ -62,14 +58,14 @@ jobs:
           with open('content/homepage-excerpt.txt', 'r', encoding='utf-8') as fh:
               excerpt = fh.read().strip()
 
+          update_headers = dict(headers)
+          update_headers['Content-Type'] = 'application/json'
+
           payload = json.dumps({
               'content': content,
               'excerpt': excerpt,
               'status': 'publish',
           }).encode('utf-8')
-
-          update_headers = dict(headers)
-          update_headers['Content-Type'] = 'application/json'
           update_url = f'{base}/wp-json/wp/v2/pages/{page_id}'
           update_request = urllib.request.Request(
               update_url,
@@ -77,9 +73,22 @@ jobs:
               headers=update_headers,
               method='POST',
           )
-
           with urllib.request.urlopen(update_request, timeout=30) as response:
               result = json.load(response)
 
+          settings_payload = json.dumps({
+              'show_on_front': 'page',
+              'page_on_front': page_id,
+          }).encode('utf-8')
+          settings_request = urllib.request.Request(
+              f'{base}/wp-json/wp/v2/settings',
+              data=settings_payload,
+              headers=update_headers,
+              method='POST',
+          )
+          with urllib.request.urlopen(settings_request, timeout=30) as response:
+              settings = json.load(response)
+
           print(f"Updated WordPress Home page ID {result['id']}: {result['link']}")
+          print(f"Front page setting: {settings.get('show_on_front')} / page {settings.get('page_on_front')}")
           PY
