@@ -1,0 +1,85 @@
+name: Publish WordPress Home
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'content/homepage.html'
+      - 'content/homepage-excerpt.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  publish-home:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Update published WordPress Home page
+        env:
+          WP_BASE_URL: ${{ secrets.WP_BASE_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import base64
+          import json
+          import os
+          import sys
+          import urllib.parse
+          import urllib.request
+
+          base = os.environ['WP_BASE_URL'].rstrip('/')
+          username = os.environ['WP_USERNAME']
+          password = os.environ['WP_APP_PASSWORD']
+
+          token = base64.b64encode(f'{username}:{password}'.encode()).decode()
+          headers = {
+              'Authorization': f'Basic {token}',
+              'User-Agent': 'BeneathOurFeet-GitHub-Publisher/1.0',
+              'Accept': 'application/json',
+          }
+
+          lookup_url = f"{base}/wp-json/wp/v2/pages?slug=home&context=edit&per_page=1"
+          request = urllib.request.Request(lookup_url, headers=headers)
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  pages = json.load(response)
+          except Exception as exc:
+              print(f'Could not authenticate to WordPress or find pages: {exc}', file=sys.stderr)
+              raise
+
+          if not pages:
+              raise SystemExit('No published WordPress page with slug "home" was found.')
+
+          page_id = pages[0]['id']
+          with open('content/homepage.html', 'r', encoding='utf-8') as fh:
+              content = fh.read()
+          with open('content/homepage-excerpt.txt', 'r', encoding='utf-8') as fh:
+              excerpt = fh.read().strip()
+
+          payload = json.dumps({
+              'content': content,
+              'excerpt': excerpt,
+              'status': 'publish',
+          }).encode('utf-8')
+
+          update_headers = dict(headers)
+          update_headers['Content-Type'] = 'application/json'
+          update_url = f'{base}/wp-json/wp/v2/pages/{page_id}'
+          update_request = urllib.request.Request(
+              update_url,
+              data=payload,
+              headers=update_headers,
+              method='POST',
+          )
+
+          with urllib.request.urlopen(update_request, timeout=30) as response:
+              result = json.load(response)
+
+          print(f"Updated WordPress Home page ID {result['id']}: {result['link']}")
+          PY
