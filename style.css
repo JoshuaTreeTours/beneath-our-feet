@@ -3,7 +3,7 @@ Theme Name: Beneath Our Feet
 Theme URI: https://beneath-our-feet.com
 Author: Beneath Our Feet
 Description: Custom WordPress theme for Beneath Our Feet.
-Version: 0.2.1
+Version: 0.3.0
 Text Domain: beneath-our-feet
 */
 
@@ -135,7 +135,62 @@ img { max-width: 100%; height: auto; }
 .bof-grid,
 .bof-feature,
 .entry,
-.navigation { width: min(1180px, 90vw); margin-left: auto; margin-right: auto; }
+.navigation,
+.bof-page-content > *:not(.alignfull) {
+  width: min(1180px, 90vw);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bof-page-content {
+  padding: 0 0 2rem;
+}
+
+.bof-page-content > .alignwide {
+  width: min(1380px, 94vw);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bof-page-content > .alignfull {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.bof-page-content > p,
+.bof-page-content > h2,
+.bof-page-content > h3,
+.bof-page-content > ul,
+.bof-page-content > ol,
+.bof-page-content > blockquote {
+  max-width: 880px;
+}
+
+.bof-page-content > h2 {
+  margin-top: 4rem;
+  font-size: clamp(2rem, 4.5vw, 4rem);
+  line-height: 1.05;
+  font-weight: 500;
+}
+
+.bof-page-content > h3 {
+  margin-top: 2.5rem;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.bof-page-content > p {
+  font-size: clamp(1.05rem, 1.8vw, 1.28rem);
+}
+
+.bof-page-content .wp-block-image,
+.bof-page-content .wp-block-gallery,
+.bof-page-content .wp-block-cover,
+.bof-page-content .wp-block-columns,
+.bof-page-content .wp-block-group {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
 
 .bof-intro {
   padding: clamp(4rem, 8vw, 7rem) 0 3rem;
