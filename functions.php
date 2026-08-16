@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+require_once get_stylesheet_directory() . '/inc/panel-importer.php';
+
 function bof_setup() {
     add_theme_support( 'title-tag' );
     add_theme_support( 'post-thumbnails' );
@@ -37,6 +39,16 @@ function bof_assets() {
             get_stylesheet_directory_uri() . '/assets/national-parks.css',
             array( 'beneath-our-feet-style' ),
             filemtime( get_stylesheet_directory() . '/assets/national-parks.css' )
+        );
+    }
+
+    $page_template = is_page() ? get_page_template_slug( get_queried_object_id() ) : '';
+    if ( in_array( $page_template, array( 'template-bof-park.php', 'template-bof-panel.php' ), true ) ) {
+        wp_enqueue_style(
+            'beneath-our-feet-panel-viewer',
+            get_stylesheet_directory_uri() . '/assets/panel-viewer.css',
+            array( 'beneath-our-feet-style' ),
+            filemtime( get_stylesheet_directory() . '/assets/panel-viewer.css' )
         );
     }
 }
