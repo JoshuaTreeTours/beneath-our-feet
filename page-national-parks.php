@@ -5,13 +5,13 @@
 get_header();
 ?>
 
-<main id="primary" class="bof-national-parks-page">
+<div id="primary" class="bof-national-parks-page">
 <?php
 while ( have_posts() ) :
     the_post();
     the_content();
 endwhile;
 ?>
-</main>
+</div>
 
 <?php get_footer(); ?>
