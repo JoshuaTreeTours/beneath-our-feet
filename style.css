@@ -3,7 +3,7 @@ Theme Name: Beneath Our Feet
 Theme URI: https://beneath-our-feet.com
 Author: Beneath Our Feet
 Description: Custom WordPress theme for Beneath Our Feet.
-Version: 0.5.0
+Version: 0.5.1
 Text Domain: beneath-our-feet
 */
 
@@ -396,7 +396,24 @@ img { max-width: 100%; height: auto; }
   .site-description { margin-top: .25rem; }
   .bof-hero { min-height: 62vh; background-position: 58% center; }
   .bof-hero-inner { margin-left: 5vw; }
-  .bof-home-hero { min-height: 62vh !important; }
+
+  /* Mobile uses the lightweight, rectangular hero asset rather than the
+     full-size Gutenberg cover image. This prevents the oversized desktop
+     image from failing to render on phones while keeping desktop unchanged. */
+  .bof-page-content > .bof-home-hero {
+    min-height: 0 !important;
+    height: auto !important;
+    aspect-ratio: 720 / 332;
+    background: var(--bof-dark) url('assets/hero-landscape.svg') center center / cover no-repeat !important;
+  }
+
+  .bof-home-hero > .wp-block-cover__image-background,
+  .bof-home-hero > .wp-block-cover__video-background,
+  .bof-home-hero .wp-block-cover__background,
+  .bof-home-hero .wp-block-cover__inner-container {
+    display: none !important;
+  }
+
   .bof-home-hero-copy { margin-left: 5vw !important; }
   .bof-grid, .bof-feature, .bof-home-feature { grid-template-columns: 1fr; }
   .bof-card { min-height: auto; }
