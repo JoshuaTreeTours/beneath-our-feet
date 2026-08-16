@@ -1,0 +1,71 @@
+/*
+Theme Name: Beneath Our Feet
+Theme URI: https://beneath-our-feet.com
+Author: Beneath Our Feet
+Description: Custom WordPress theme for Beneath Our Feet.
+Version: 0.1.0
+Text Domain: beneath-our-feet
+*/
+
+:root {
+  --bof-bg: #f3ead7;
+  --bof-ink: #201c16;
+  --bof-accent: #6b5a2b;
+  --bof-border: #c8b98f;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  background: var(--bof-bg);
+  color: var(--bof-ink);
+  line-height: 1.6;
+}
+
+a { color: var(--bof-accent); }
+
+.site-header,
+.site-footer {
+  padding: 1.25rem 5vw;
+  border-color: var(--bof-border);
+  border-style: solid;
+  border-width: 0 0 1px;
+}
+
+.site-footer {
+  border-width: 1px 0 0;
+  margin-top: 3rem;
+}
+
+.site-title {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 4rem);
+  letter-spacing: .04em;
+}
+
+.site-description { margin: .25rem 0 0; }
+
+.site-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+}
+
+.site-main {
+  width: min(1100px, 90vw);
+  margin: 2rem auto;
+}
+
+.entry {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--bof-border);
+}
+
+.entry-title { margin-top: 0; }
+
+img { max-width: 100%; height: auto; }
