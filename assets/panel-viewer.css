@@ -1,0 +1,315 @@
+.page-template-template-bof-panel .site-header,
+.page-template-template-bof-park .site-header {
+  display: none;
+}
+
+.page-template-template-bof-panel .site-main,
+.page-template-template-bof-park .site-main {
+  background: #efe2c8;
+}
+
+.bof-park-page,
+.bof-panel-viewer {
+  min-height: 100vh;
+  background: #efe2c8;
+  color: #201c16;
+}
+
+.bof-park-intro {
+  width: min(1080px, 88vw);
+  margin: 0 auto;
+  padding: clamp(5.5rem, 10vw, 9rem) 0 clamp(3rem, 6vw, 5rem);
+}
+
+.bof-park-kicker {
+  margin: 0 0 1rem;
+  color: #a9792d;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.bof-park-intro h1 {
+  max-width: 900px;
+  margin: 0 0 1.2rem;
+  font-size: clamp(3.1rem, 8vw, 7.4rem);
+  font-weight: 500;
+  line-height: .92;
+  letter-spacing: -.035em;
+}
+
+.bof-park-description {
+  max-width: 840px;
+  font-size: clamp(1.12rem, 2vw, 1.35rem);
+  line-height: 1.68;
+  color: #4c4031;
+}
+
+.bof-park-description p:first-child {
+  margin-top: 0;
+}
+
+.bof-park-count {
+  margin-top: 1.4rem;
+  color: #6c5b43;
+  font-size: .9rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.bof-park-strip {
+  display: flex;
+  gap: .45rem;
+  width: 100%;
+  overflow-x: auto;
+  padding: .75rem max(5vw, 24px);
+  background: #172018;
+  border-top: 1px solid rgba(255,255,255,.08);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  scrollbar-width: thin;
+}
+
+.bof-park-strip a {
+  flex: 0 0 auto;
+  padding: .48rem .7rem;
+  border: 1px solid rgba(223,189,115,.24);
+  color: #efe5cf;
+  text-decoration: none;
+  font-size: .78rem;
+  line-height: 1;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+.bof-park-strip a:hover,
+.bof-park-strip a:focus-visible,
+.bof-park-strip a.is-current {
+  color: #172018;
+  background: #dfbd73;
+  border-color: #dfbd73;
+}
+
+.bof-park-strip-home {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.bof-park-panels {
+  width: min(1280px, 92vw);
+  margin: 0 auto;
+  padding: clamp(3rem, 6vw, 6rem) 0 clamp(5rem, 9vw, 9rem);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: #cbb78d;
+}
+
+.bof-park-panel-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  color: #201c16;
+  background: #f6edda;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.bof-park-panel-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  transition: transform .25s ease;
+}
+
+.bof-park-panel-card span {
+  display: block;
+  padding: 1.05rem 1.15rem 1.25rem;
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+
+.bof-park-panel-card:hover img,
+.bof-park-panel-card:focus-visible img {
+  transform: scale(1.025);
+}
+
+.bof-panel-viewer {
+  background: #111713;
+  color: #f6edda;
+}
+
+.bof-panel-topbar {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .75rem 86px .75rem 22px;
+  background: #172018;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.bof-panel-topbar a {
+  color: #f0d79e;
+  text-decoration: none;
+}
+
+.bof-panel-topbar a:hover,
+.bof-panel-topbar a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.bof-panel-counter {
+  color: #b9aa8b;
+  font-size: .78rem;
+  letter-spacing: .1em;
+}
+
+.bof-panel-park-strip {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.bof-panel-stage {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 110px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(1rem, 3vw, 2.5rem) clamp(4rem, 7vw, 7rem) clamp(2.5rem, 5vw, 5rem);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.035), transparent 45%),
+    #111713;
+}
+
+.bof-panel-artwork {
+  width: min(1400px, 100%);
+  text-align: center;
+}
+
+.bof-panel-artwork h1 {
+  margin: 0 0 1rem;
+  color: #e8d6aa;
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  font-weight: 500;
+  letter-spacing: .03em;
+}
+
+.bof-panel-image-link {
+  display: inline-block;
+  max-width: 100%;
+  text-decoration: none;
+  cursor: zoom-in;
+}
+
+.bof-panel-image-link img {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  max-height: calc(100vh - 185px);
+  height: auto;
+  margin: 0 auto;
+  box-shadow: 0 14px 46px rgba(0,0,0,.38);
+}
+
+.bof-panel-caption {
+  max-width: 760px;
+  margin: 1rem auto 0;
+  color: #cfc2a7;
+  font-size: .92rem;
+}
+
+.bof-panel-arrow {
+  position: fixed;
+  top: 52%;
+  z-index: 30;
+  width: 52px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(239,226,200,.35);
+  color: #f6edda;
+  background: rgba(23,32,24,.82);
+  text-decoration: none;
+  font-size: 3rem;
+  line-height: 1;
+  box-shadow: 0 8px 28px rgba(0,0,0,.25);
+  backdrop-filter: blur(7px);
+}
+
+.bof-panel-arrow:hover,
+.bof-panel-arrow:focus-visible {
+  color: #172018;
+  background: #dfbd73;
+  border-color: #dfbd73;
+}
+
+.bof-panel-arrow-prev { left: 14px; }
+.bof-panel-arrow-next { right: 14px; }
+
+.page-template-template-bof-panel .site-footer,
+.page-template-template-bof-park .site-footer {
+  border-top-color: rgba(203,183,141,.35);
+}
+
+@media (max-width: 900px) {
+  .bof-park-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .bof-park-intro {
+    width: min(90vw, 620px);
+    padding-top: 5rem;
+  }
+
+  .bof-park-panels {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .bof-park-panel-card img {
+    aspect-ratio: auto;
+  }
+
+  .bof-panel-topbar {
+    padding-left: 14px;
+    padding-right: 68px;
+    min-height: 52px;
+  }
+
+  .bof-panel-stage {
+    min-height: calc(100vh - 98px);
+    padding: .85rem 2.9rem 2rem;
+  }
+
+  .bof-panel-artwork h1 {
+    font-size: 1.06rem;
+    margin-bottom: .7rem;
+  }
+
+  .bof-panel-image-link img {
+    max-height: none;
+    width: 100%;
+  }
+
+  .bof-panel-arrow {
+    top: 50%;
+    width: 38px;
+    height: 58px;
+    font-size: 2.25rem;
+  }
+
+  .bof-panel-arrow-prev { left: 4px; }
+  .bof-panel-arrow-next { right: 4px; }
+
+  .bof-panel-caption {
+    font-size: .84rem;
+  }
+}
