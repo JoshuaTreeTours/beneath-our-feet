@@ -1,0 +1,54 @@
+name: Deploy Theme to Cloudways
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudways-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudways Git pull
+        env:
+          CLOUDWAYS_ACCESS_TOKEN: ${{ secrets.CLOUDWAYS_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${CLOUDWAYS_ACCESS_TOKEN:-}" ]; then
+            echo "CLOUDWAYS_ACCESS_TOKEN is not configured."
+            exit 1
+          fi
+
+          response_file="$(mktemp)"
+          http_code=$(curl --silent --show-error \
+            --output "$response_file" \
+            --write-out "%{http_code}" \
+            --request POST \
+            --header "Authorization: Bearer ${CLOUDWAYS_ACCESS_TOKEN}" \
+            --header "Accept: application/json" \
+            --data-urlencode "server_id=1476123" \
+            --data-urlencode "app_id=6617325" \
+            --data-urlencode "git_url=git@github.com:JoshuaTreeTours/beneath-our-feet.git" \
+            --data-urlencode "branch_name=main" \
+            --data-urlencode "deploy_path=wp-content/themes/beneath-our-feet/" \
+            "https://api.cloudways.com/api/v2/git/pull")
+
+          echo "Cloudways HTTP status: ${http_code}"
+          cat "$response_file"
+          echo
+
+          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
+            echo "Cloudways deployment request failed."
+            exit 1
+          fi
+
+          echo "Cloudways accepted the deployment request for main."
