@@ -1,0 +1,301 @@
+.page-national-parks .site-header {
+  position: relative;
+  z-index: 2;
+}
+
+.bof-national-parks-page {
+  width: 100%;
+  overflow: hidden;
+  background: #efe2c8;
+}
+
+.bof-national-parks-page .wp-block-group,
+.bof-national-parks-page .wp-block-columns {
+  box-sizing: border-box;
+}
+
+.bof-np-hero {
+  position: relative;
+  min-height: min(78vh, 820px);
+  margin: 0 !important;
+  display: flex;
+  align-items: flex-end;
+  color: #fff8e9;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 75% 22%, rgba(229, 178, 89, .34), transparent 24%),
+    linear-gradient(180deg, #314536 0%, #475944 28%, #7a5e3f 58%, #4d3525 100%);
+}
+
+.bof-np-hero::before,
+.bof-np-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -8% 0 -8%;
+  pointer-events: none;
+}
+
+.bof-np-hero::before {
+  height: 48%;
+  background:
+    linear-gradient(170deg, transparent 0 20%, rgba(42, 29, 20, .76) 21% 34%, transparent 35%),
+    linear-gradient(187deg, transparent 0 34%, rgba(117, 79, 47, .72) 35% 49%, transparent 50%),
+    linear-gradient(176deg, transparent 0 50%, rgba(61, 44, 29, .84) 51% 66%, transparent 67%),
+    linear-gradient(184deg, transparent 0 66%, rgba(143, 103, 61, .68) 67% 82%, transparent 83%);
+  opacity: .95;
+}
+
+.bof-np-hero::after {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(16, 22, 17, .62) 0%, rgba(16, 22, 17, .18) 54%, rgba(16, 22, 17, .08) 100%);
+}
+
+.bof-np-hero-inner {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 88vw);
+  margin: 0 auto !important;
+  padding: clamp(6rem, 12vw, 10rem) 0 clamp(4rem, 8vw, 7rem);
+}
+
+.bof-np-eyebrow {
+  margin: 0 0 1rem !important;
+  color: #d9b66f;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.bof-np-title {
+  max-width: 820px;
+  margin: 0 0 1.25rem !important;
+  color: #fff8e9;
+  font-size: clamp(4rem, 10vw, 8.5rem);
+  font-weight: 500;
+  line-height: .88;
+  letter-spacing: -.035em;
+}
+
+.bof-np-lead {
+  max-width: 820px;
+  margin: 0 0 1.6rem !important;
+  color: #f5ecd9;
+  font-size: clamp(1.18rem, 2.2vw, 1.65rem);
+  line-height: 1.45;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .22);
+}
+
+.bof-np-scroll a {
+  color: #f0cc84;
+  font-size: .85rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.bof-np-intro {
+  width: min(920px, 88vw);
+  margin: 0 auto !important;
+  padding: clamp(5rem, 10vw, 9rem) 0 clamp(4rem, 7vw, 6rem);
+}
+
+.bof-np-intro h2,
+.bof-np-library h2,
+.bof-np-closing h2 {
+  margin: 0 0 1.25rem !important;
+  color: #201c16;
+  font-size: clamp(2.7rem, 6vw, 5.4rem);
+  font-weight: 500;
+  line-height: .98;
+  letter-spacing: -.025em;
+}
+
+.bof-np-intro p:not(.bof-np-eyebrow),
+.bof-np-closing p:not(.bof-np-eyebrow) {
+  max-width: 860px;
+  color: #3f372c;
+  font-size: clamp(1.08rem, 1.9vw, 1.28rem);
+  line-height: 1.72;
+}
+
+.bof-np-principles {
+  width: min(1180px, 90vw);
+  margin: 0 auto clamp(6rem, 10vw, 9rem) !important;
+  gap: 1px !important;
+  padding: 1px;
+  background: #cbb78d;
+}
+
+.bof-np-principles > .wp-block-column {
+  margin: 0 !important;
+  padding: clamp(2rem, 4vw, 3.2rem);
+  background: #f6edda;
+}
+
+.bof-np-number {
+  margin: 0 0 1.2rem !important;
+  color: #a9792d;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.bof-np-principles h3 {
+  margin: 0 0 .8rem !important;
+  color: #241e17;
+  font-size: clamp(1.65rem, 3vw, 2.35rem);
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.bof-np-principles p:not(.bof-np-number) {
+  margin-bottom: 0 !important;
+  color: #514638;
+  font-size: 1.02rem;
+  line-height: 1.58;
+}
+
+.bof-np-library {
+  width: min(1280px, 92vw);
+  margin: 0 auto !important;
+  padding: 0 0 clamp(6rem, 11vw, 10rem);
+}
+
+.bof-np-library-intro {
+  max-width: 820px;
+  margin-bottom: 2.6rem !important;
+  color: #514638;
+  font-size: clamp(1.06rem, 1.8vw, 1.22rem);
+  line-height: 1.66;
+}
+
+.bof-np-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid #cbb78d;
+  background: #cbb78d;
+}
+
+.bof-np-card {
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.65rem;
+  color: #201c16;
+  text-decoration: none;
+  background:
+    linear-gradient(180deg, rgba(246, 237, 218, .84), rgba(246, 237, 218, 1)),
+    repeating-linear-gradient(176deg, transparent 0 22px, rgba(169, 121, 45, .08) 23px 24px);
+  transition: transform .18s ease, background .18s ease, color .18s ease;
+}
+
+.bof-np-card:hover,
+.bof-np-card:focus-visible {
+  position: relative;
+  z-index: 1;
+  color: #fff8e9;
+  background: #38533b;
+  transform: translateY(-3px);
+  outline: none;
+}
+
+.bof-np-card-region {
+  margin-bottom: auto;
+  color: #9a6d25;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.bof-np-card:hover .bof-np-card-region,
+.bof-np-card:focus-visible .bof-np-card-region {
+  color: #e0bd76;
+}
+
+.bof-np-card strong {
+  display: block;
+  margin: 1.2rem 0 .55rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.65rem;
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.bof-np-card > span:last-child {
+  color: #594c3d;
+  font-size: .92rem;
+  line-height: 1.48;
+}
+
+.bof-np-card:hover > span:last-child,
+.bof-np-card:focus-visible > span:last-child {
+  color: #efe5cf;
+}
+
+.bof-np-closing {
+  margin: 0 !important;
+  padding: clamp(5rem, 10vw, 9rem) 6vw;
+  color: #f5ecd9;
+  background: #172018;
+}
+
+.bof-np-closing > * {
+  width: min(920px, 88vw);
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.bof-np-closing h2 {
+  color: #fff8e9;
+}
+
+.bof-np-closing p:not(.bof-np-eyebrow) {
+  color: #e5dac5;
+}
+
+@media (max-width: 1020px) {
+  .bof-np-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 780px) {
+  .bof-np-hero {
+    min-height: 74vh;
+  }
+
+  .bof-np-hero-inner {
+    width: min(90vw, 620px);
+    padding-top: 7rem;
+  }
+
+  .bof-np-title {
+    font-size: clamp(3.9rem, 19vw, 6.4rem);
+  }
+
+  .bof-np-principles {
+    display: block !important;
+  }
+
+  .bof-np-principles > .wp-block-column + .wp-block-column {
+    margin-top: 1px !important;
+  }
+
+  .bof-np-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bof-np-card {
+    min-height: 220px;
+  }
+
+  .bof-np-closing {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
