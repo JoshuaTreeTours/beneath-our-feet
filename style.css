@@ -3,7 +3,7 @@ Theme Name: Beneath Our Feet
 Theme URI: https://beneath-our-feet.com
 Author: Beneath Our Feet
 Description: Custom WordPress theme for Beneath Our Feet.
-Version: 0.2.0
+Version: 0.2.1
 Text Domain: beneath-our-feet
 */
 
@@ -80,7 +80,7 @@ img { max-width: 100%; height: auto; }
   display: flex;
   align-items: flex-end;
   overflow: hidden;
-  background-image: url('assets/hero-landscape.svg');
+  background-image: url('https://wordpress-1476123-6617325.cloudwaysapps.com/wp-content/uploads/2026/08/763018716_122104309185419437_8310539191905664210_n.jpg');
   background-size: cover;
   background-position: center;
   border-bottom: 1px solid #8d754f;
@@ -89,7 +89,7 @@ img { max-width: 100%; height: auto; }
 .bof-hero-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(25, 22, 16, .78) 0%, rgba(25, 22, 16, .28) 52%, rgba(25, 22, 16, .08) 100%);
+  background: linear-gradient(90deg, rgba(25, 22, 16, .58) 0%, rgba(25, 22, 16, .15) 52%, rgba(25, 22, 16, .03) 100%);
 }
 
 .bof-hero-inner {
