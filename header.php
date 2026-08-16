@@ -5,33 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php wp_head(); ?>
     <?php if ( is_front_page() ) : ?>
-    <style id="bof-mobile-home-hero-v4">
-        .bof-mobile-home-hero { display: none; }
+    <style id="bof-responsive-home-heroes">
+        /* The mobile hero is a normal Gutenberg Cover block so it can be
+           replaced directly from the WordPress Media Library. */
+        .bof-mobile-hero {
+            display: none !important;
+        }
+
         @media (max-width: 780px) {
-            .bof-mobile-home-hero {
-                display: block !important;
+            .bof-desktop-hero {
+                display: none !important;
+            }
+
+            .bof-page-content > .bof-mobile-hero,
+            .bof-mobile-hero {
+                display: flex !important;
                 width: 100vw !important;
                 max-width: none !important;
+                min-height: 0 !important;
+                height: auto !important;
+                aspect-ratio: 1023 / 1537;
                 margin: 0 calc(50% - 50vw) !important;
                 padding: 0 !important;
-                background: #efe0bf;
                 overflow: hidden;
+                background: #efe2c8;
             }
-            .bof-mobile-home-hero img {
+
+            .bof-mobile-hero .wp-block-cover__image-background {
                 display: block !important;
                 width: 100% !important;
+                height: 100% !important;
                 max-width: none !important;
-                height: auto !important;
-                aspect-ratio: auto !important;
                 object-fit: contain !important;
-                margin: 0 !important;
-                padding: 0 !important;
+                object-position: center center !important;
             }
-            body.home .site-main > .wp-block-cover:first-of-type,
-            body.home .site-main > .bof-home-hero,
-            body.home .site-main .entry-content > .wp-block-cover:first-of-type,
-            body.home .site-main .bof-page-content > .wp-block-cover:first-of-type,
-            body.home .site-main .bof-page-content > .bof-home-hero {
+
+            .bof-mobile-hero .wp-block-cover__background,
+            .bof-mobile-hero .wp-block-cover__inner-container {
                 display: none !important;
             }
         }
@@ -65,24 +75,3 @@
     </nav>
 </header>
 <main class="site-main">
-<?php if ( is_front_page() ) : ?>
-    <?php
-    $bof_mobile_hero_b64 = '';
-    for ( $bof_mobile_hero_part = 1; $bof_mobile_hero_part <= 10; $bof_mobile_hero_part++ ) {
-        $bof_mobile_hero_path = get_stylesheet_directory() . '/assets/mobile-hero.b64.' . $bof_mobile_hero_part;
-        if ( is_readable( $bof_mobile_hero_path ) ) {
-            $bof_mobile_hero_b64 .= trim( file_get_contents( $bof_mobile_hero_path ) );
-        }
-    }
-    ?>
-    <div class="bof-mobile-home-hero" aria-label="Beneath Our Feet mobile hero">
-        <img
-            src="data:image/jpeg;base64,<?php echo esc_attr( $bof_mobile_hero_b64 ); ?>"
-            alt="Beneath Our Feet — geology, deep time, and Earth's story"
-            width="480"
-            height="853"
-            decoding="async"
-            fetchpriority="high"
-        >
-    </div>
-<?php endif; ?>
