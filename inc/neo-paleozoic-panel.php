@@ -2,7 +2,8 @@
 /**
  * Add the missing late Paleozoic / Permian extinction panel to Deep Time.
  * The supplied artwork is stored as six base64 staging parts in the theme,
- * reconstructed once into the WordPress Media Library, then reused normally.
+ * reconstructed into the WordPress Media Library and also available through a
+ * direct image endpoint as a reliable fallback.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,6 +28,26 @@ function bof_neo_paleozoic_image_bytes() {
     return ( false === $bytes || '' === $bytes ) ? false : $bytes;
 }
 
+/** Serve the exact supplied panel without depending on attachment metadata. */
+function bof_serve_neo_paleozoic_panel_image() {
+    if ( empty( $_GET['bof_neo_paleozoic_image'] ) ) {
+        return;
+    }
+
+    $bytes = bof_neo_paleozoic_image_bytes();
+    if ( false === $bytes ) {
+        status_header( 404 );
+        exit;
+    }
+
+    nocache_headers();
+    header( 'Content-Type: image/webp' );
+    header( 'Content-Length: ' . strlen( $bytes ) );
+    echo $bytes;
+    exit;
+}
+add_action( 'init', 'bof_serve_neo_paleozoic_panel_image', 0 );
+
 function bof_neo_paleozoic_register_file( $attachment_id, $filename ) {
     $attachment_id = (int) $attachment_id;
     if ( ! $attachment_id ) {
@@ -47,7 +68,6 @@ function bof_neo_paleozoic_register_file( $attachment_id, $filename ) {
             return 0;
         }
 
-        // This is the critical WordPress attachment-to-file registration.
         update_attached_file( $attachment_id, $upload['file'] );
         $attached_file = $upload['file'];
 
@@ -55,12 +75,10 @@ function bof_neo_paleozoic_register_file( $attachment_id, $filename ) {
             array(
                 'ID'             => $attachment_id,
                 'post_mime_type' => 'image/webp',
-                'guid'            => $upload['url'],
+                'guid'           => $upload['url'],
             )
         );
     } else {
-        // Re-register an existing physical file if older code created the post
-        // without the standard _wp_attached_file relationship.
         update_attached_file( $attachment_id, $attached_file );
     }
 
@@ -124,10 +142,7 @@ function bof_neo_paleozoic_attachment_id() {
 }
 
 function bof_seed_neo_paleozoic_panel() {
-    $version = 2;
-    if ( (int) get_option( 'bof_neo_paleozoic_panel_version', 0 ) >= $version ) {
-        return;
-    }
+    $version = 3;
 
     $root = get_page_by_path( 'collections', OBJECT, 'page' );
     if ( ! $root ) {
@@ -147,7 +162,6 @@ function bof_seed_neo_paleozoic_panel() {
     $panel_title = 'The Neo-Paleozoic: Age of Coal Forests and Crisis';
     $existing = bof_topic_find_child_page( $deep_time->ID, sanitize_title( $panel_title ) );
 
-    // Position 6 is immediately after the Paleozoic overview and before Mesozoic.
     if ( ! $existing ) {
         $later_pages = get_posts(
             array(
