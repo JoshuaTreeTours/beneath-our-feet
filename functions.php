@@ -39,6 +39,15 @@ function bof_assets() {
         wp_get_theme()->get( 'Version' )
     );
 
+    /* The desktop hero image already contains the Beneath Our Feet title and
+       subtitle. Hide only Gutenberg's duplicated overlay copy on desktop. */
+    if ( is_front_page() ) {
+        wp_add_inline_style(
+            'beneath-our-feet-style',
+            '@media (min-width:781px){.bof-home-hero .wp-block-cover__inner-container{display:none!important;}}'
+        );
+    }
+
     if ( is_page( 'national-parks' ) ) {
         $np_css = get_stylesheet_directory() . '/assets/national-parks.css';
         wp_enqueue_style(
