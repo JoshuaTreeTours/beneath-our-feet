@@ -133,3 +133,9 @@ img { max-width: 100%; height: auto; }
     opacity: 1 !important;
   }
 }
+
+/* Keep the first homepage text close to the hero without changing block structure. */
+body.home .bof-home-intro {
+  margin-top: 0 !important;
+  padding-top: clamp(1rem, 2vw, 1.5rem) !important;
+}
