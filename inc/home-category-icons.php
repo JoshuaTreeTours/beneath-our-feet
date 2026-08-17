@@ -22,8 +22,10 @@ function bof_add_home_category_icons( $block_content, $block ) {
         return $block_content;
     }
 
+    $plain = trim( wp_strip_all_tags( $block_content ) );
+
     foreach ( array( 'Places', 'Deep Time', 'How We Know' ) as $title ) {
-        if ( false === strpos( wp_strip_all_tags( $block_content ), $title ) ) {
+        if ( false === strpos( $plain, $title ) ) {
             continue;
         }
 
@@ -32,12 +34,14 @@ function bof_add_home_category_icons( $block_content, $block ) {
             return $block_content;
         }
 
-        return preg_replace(
-            '/(<h3\\b[^>]*>)(.*?)(<\\/h3>)/is',
+        $updated = preg_replace(
+            '/(<h[1-6]\b[^>]*>)(.*?)(<\/h[1-6]>)/is',
             '$1<span class="bof-category-heading-inner">$2<span class="bof-category-icon">' . $svg . '</span></span>$3',
             $block_content,
             1
         );
+
+        return $updated ? $updated : $block_content;
     }
 
     return $block_content;
@@ -51,9 +55,9 @@ function bof_home_category_icon_styles() {
 
     $css = '
     .bof-category-heading-inner{position:relative;display:block;padding-right:4.25rem}
-    .bof-category-icon{position:absolute;right:.05rem;top:50%;width:3.4rem;height:3.4rem;transform:translateY(-50%);color:var(--bof-gold);opacity:.34;pointer-events:none}
+    .bof-category-icon{position:absolute;right:.05rem;top:50%;width:3.4rem;height:3.4rem;transform:translateY(-50%);color:#a8782f;opacity:.42;pointer-events:none}
     .bof-category-icon svg{display:block;width:100%;height:100%}
-    @media(max-width:600px){.bof-category-heading-inner{padding-right:3.7rem}.bof-category-icon{width:3rem;height:3rem;opacity:.3}}
+    @media(max-width:600px){.bof-category-heading-inner{padding-right:3.7rem}.bof-category-icon{width:3rem;height:3rem;opacity:.38}}
     ';
 
     wp_add_inline_style( 'beneath-our-feet-style', $css );
