@@ -129,7 +129,7 @@ img { max-width: 100%; height: auto; }
 
   body.home .bof-home-hero > .wp-block-cover__image-background,
   body.home .bof-home-hero .wp-block-cover__image-background {
-    filter: brightness(1.16) !important;
+    filter: brightness(1.35) !important;
     opacity: 1 !important;
   }
 }
