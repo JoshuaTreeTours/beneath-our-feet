@@ -18,6 +18,7 @@ require_once get_stylesheet_directory() . '/inc/site-icon.php';
 require_once get_stylesheet_directory() . '/inc/home-material-cards.php';
 require_once get_stylesheet_directory() . '/inc/structured-data.php';
 require_once get_stylesheet_directory() . '/inc/structured-data-socials.php';
+require_once get_stylesheet_directory() . '/inc/media-seo-metadata.php';
 
 function bof_setup() {
     add_theme_support( 'title-tag' );
@@ -180,7 +181,7 @@ add_action( 'init', 'bof_seed_national_parks_page', 20 );
 
 /**
  * Seed and version the Source Material page from the theme. After this update,
- * it remains a normal Gutenberg page and can be edited manually in WordPress.
+ * it remains a normal Gutenberg page that can be edited manually in WordPress.
  */
 function bof_seed_source_material_page() {
     $content_path = get_stylesheet_directory() . '/content/source-material.html';
