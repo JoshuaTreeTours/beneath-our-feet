@@ -2,11 +2,25 @@
 /** Full-size viewer for non-National-Park topic collections. */
 get_header();
 
-$page_id       = get_queried_object_id();
-$attachment_id = (int) get_post_meta( $page_id, '_bof_topic_attachment_id', true );
-$topic_title   = get_post_meta( $page_id, '_bof_topic_title', true );
-$panel_title   = get_post_meta( $page_id, '_bof_topic_panel_title', true );
-$image_url     = $attachment_id ? wp_get_attachment_image_url( $attachment_id, 'full' ) : '';
+$page_id         = get_queried_object_id();
+$attachment_id   = (int) get_post_meta( $page_id, '_bof_topic_attachment_id', true );
+$topic_title     = get_post_meta( $page_id, '_bof_topic_title', true );
+$panel_title     = get_post_meta( $page_id, '_bof_topic_panel_title', true );
+$source_filename = get_post_meta( $page_id, '_bof_topic_source_filename', true );
+$image_url       = $attachment_id ? wp_get_attachment_image_url( $attachment_id, 'full' ) : '';
+
+// The supplied late-Paleozoic panel is reconstructed from theme staging parts.
+// Serve it directly so rendering does not depend on WordPress image metadata.
+if ( 'neo-paleozoic-age-of-coal-forests-and-crisis.webp' === $source_filename ) {
+    $image_url = add_query_arg(
+        array(
+            'bof_neo_paleozoic_image' => '1',
+            'v'                        => '3',
+        ),
+        home_url( '/' )
+    );
+}
+
 list( $prev_id, $next_id ) = bof_topic_panel_neighbors( $page_id );
 $parent_id = wp_get_post_parent_id( $page_id );
 ?>
