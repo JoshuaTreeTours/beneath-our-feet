@@ -8,17 +8,17 @@ $topic_title     = get_post_meta( $page_id, '_bof_topic_title', true );
 $panel_title     = get_post_meta( $page_id, '_bof_topic_panel_title', true );
 $source_filename = get_post_meta( $page_id, '_bof_topic_source_filename', true );
 $image_url       = $attachment_id ? wp_get_attachment_image_url( $attachment_id, 'full' ) : '';
+$image_is_data   = false;
 
 // The supplied late-Paleozoic panel is reconstructed from theme staging parts.
-// Serve it directly so rendering does not depend on WordPress image metadata.
-if ( 'neo-paleozoic-age-of-coal-forests-and-crisis.webp' === $source_filename ) {
-    $image_url = add_query_arg(
-        array(
-            'bof_neo_paleozoic_image' => '1',
-            'v'                        => '3',
-        ),
-        home_url( '/' )
-    );
+// Feed it directly to the browser so rendering does not depend on a URL,
+// attachment metadata, or Cloudways serving a generated upload.
+if ( 'neo-paleozoic-age-of-coal-forests-and-crisis.webp' === $source_filename && function_exists( 'bof_neo_paleozoic_data_uri' ) ) {
+    $inline_image = bof_neo_paleozoic_data_uri();
+    if ( $inline_image ) {
+        $image_url     = $inline_image;
+        $image_is_data = true;
+    }
 }
 
 list( $prev_id, $next_id ) = bof_topic_panel_neighbors( $page_id );
@@ -40,8 +40,8 @@ $parent_id = wp_get_post_parent_id( $page_id );
         <?php endif; ?>
 
         <?php if ( $image_url ) : ?>
-            <a class="bof-panel-image-link" href="<?php echo esc_url( $image_url ); ?>" aria-label="Open full-size panel image">
-                <img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $panel_title ); ?>" decoding="async">
+            <a class="bof-panel-image-link" href="<?php echo $image_is_data ? esc_attr( $image_url ) : esc_url( $image_url ); ?>" aria-label="Open full-size panel image">
+                <img src="<?php echo $image_is_data ? esc_attr( $image_url ) : esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $panel_title ); ?>" decoding="async">
             </a>
         <?php endif; ?>
 
