@@ -1,0 +1,308 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "slug": "places",
+      "title": "Places",
+      "description": "Landscapes & destinations",
+      "panels": [
+        {"filename":"source-000.webp","title":"Patagonia"},
+        {"filename":"source-005.webp","title":"Niagara Falls"},
+        {"filename":"source-007.webp","title":"Sculpted Light, Ancient Sand"},
+        {"filename":"source-015.webp","title":"Valley of the Gods"},
+        {"filename":"source-024.webp","title":"Trillium Lake & Mount Hood"},
+        {"filename":"source-027.webp","title":"Mono Lake"},
+        {"filename":"source-031.webp","title":"Horseshoe Bend"},
+        {"filename":"source-036.webp","title":"Monterey Canyon"},
+        {"filename":"source-040.webp","title":"Cedar Breaks"},
+        {"filename":"source-041.webp","title":"John Day Fossil Beds"},
+        {"filename":"source-043.webp","title":"San Jacinto Mountains"},
+        {"filename":"source-056.webp","title":"Canyon de Chelly"},
+        {"filename":"source-063.webp","title":"Big Sur"},
+        {"filename":"source-070.webp","title":"Portland, Oregon"},
+        {"filename":"source-082.webp","title":"Moab, Utah"},
+        {"filename":"source-093.webp","title":"Redwood National Forest"},
+        {"filename":"source-099.webp","title":"Crown Point, Columbia Gorge"},
+        {"filename":"source-116.webp","title":"La Brea Tar Pits"},
+        {"filename":"source-139.webp","title":"Monument Valley"},
+        {"filename":"source-147.webp","title":"Santorini"},
+        {"filename":"source-154.webp","title":"Pilbara, Western Australia"},
+        {"filename":"source-155.webp","title":"Organ Pipe Cactus National Monument"},
+        {"filename":"source-164.webp","title":"San Gabriel Mountains"}
+      ]
+    },
+    {
+      "slug": "santa-barbara-geology",
+      "title": "Santa Barbara Geology",
+      "description": "Faults, coast, islands & local deep time",
+      "panels": [
+        {"filename":"source-060.webp","title":"The Faults of Santa Barbara"},
+        {"filename":"source-100.webp","title":"Santa Barbara Channels Oil Field"},
+        {"filename":"source-036.webp","title":"Monterey Canyon"},
+        {"filename":"33-channel-islands--channel-islands.webp","title":"The Channel Islands"},
+        {"filename":"source-152.webp","title":"La Cumbre Peak"}
+      ]
+    },
+    {
+      "slug": "colorado-plateau",
+      "title": "Colorado Plateau",
+      "description": "Canyons, arches, uplift & desert stone",
+      "panels": [
+        {"filename":"source-051.webp","title":"The Colorado Plateau"},
+        {"filename":"source-075.webp","title":"Colorado Plateau — The Grand Staircase of Parks"},
+        {"filename":"02-grand-canyon--grand-canyon-national-park.webp","title":"Grand Canyon National Park"},
+        {"filename":"06-zion--zion-national-park.webp","title":"Zion National Park"},
+        {"filename":"07-bryce-canyon--bryce-canyon-national-park.webp","title":"Bryce Canyon National Park"},
+        {"filename":"09-arches--arches-national-park.webp","title":"Arches National Park"},
+        {"filename":"11-canyonlands--canyonlands-national-park.webp","title":"Canyonlands National Park"},
+        {"filename":"12-capitol-reef--capitol-reef-national-park.webp","title":"Capitol Reef National Park"},
+        {"filename":"30-petrified-forest--petrified-forest-national-park.webp","title":"Petrified Forest National Park"},
+        {"filename":"source-031.webp","title":"Horseshoe Bend"},
+        {"filename":"source-056.webp","title":"Canyon de Chelly"},
+        {"filename":"source-082.webp","title":"Moab, Utah"},
+        {"filename":"source-139.webp","title":"Monument Valley"},
+        {"filename":"source-015.webp","title":"Valley of the Gods"}
+      ]
+    },
+    {
+      "slug": "california-geology",
+      "title": "California Geology",
+      "description": "Faults, batholiths, volcanoes & coast",
+      "panels": [
+        {"filename":"01-joshua-tree--joshua-tree-national-park.webp","title":"Joshua Tree National Park"},
+        {"filename":"14-death-valley--death-valley.webp","title":"Death Valley"},
+        {"filename":"16-yosemite--half-dome.webp","title":"Yosemite — Half Dome"},
+        {"filename":"17-sequoia--sequoia-national-park.webp","title":"Sequoia National Park"},
+        {"filename":"18-lassen-volcanic--lassen-volcanic-national-park-panel-1.webp","title":"Lassen Volcanic National Park"},
+        {"filename":"33-channel-islands--channel-islands.webp","title":"Channel Islands"},
+        {"filename":"source-027.webp","title":"Mono Lake"},
+        {"filename":"source-039.webp","title":"Long Valley Caldera"},
+        {"filename":"source-043.webp","title":"San Jacinto Mountains"},
+        {"filename":"source-045.webp","title":"The San Andreas Fault"},
+        {"filename":"source-060.webp","title":"The Faults of Santa Barbara"},
+        {"filename":"source-063.webp","title":"Big Sur"},
+        {"filename":"source-100.webp","title":"Santa Barbara Channels Oil Field"},
+        {"filename":"source-116.webp","title":"La Brea Tar Pits"},
+        {"filename":"source-150.webp","title":"Golden Gate Ridge"},
+        {"filename":"source-152.webp","title":"La Cumbre Peak"},
+        {"filename":"source-161.webp","title":"Sierra Nevada Batholith"},
+        {"filename":"source-164.webp","title":"San Gabriel Mountains"}
+      ]
+    },
+    {
+      "slug": "deep-time",
+      "title": "Deep Time",
+      "description": "Earth history from the Hadean onward",
+      "panels": [
+        {"filename":"source-146.webp","title":"The Hadean Eon"},
+        {"filename":"source-108.webp","title":"The Archean Eon"},
+        {"filename":"source-092.webp","title":"The Paleoproterozoic Era"},
+        {"filename":"source-073.webp","title":"The Neoproterozoic"},
+        {"filename":"source-094.webp","title":"The Paleozoic Era"},
+        {"filename":"source-068.webp","title":"The Mesozoic Era"},
+        {"filename":"source-123.webp","title":"The Story of Earth's Deep Time"},
+        {"filename":"source-133.webp","title":"Earth's Clock"},
+        {"filename":"source-053.webp","title":"Geologic Time Scale"},
+        {"filename":"source-025.webp","title":"Earth's Calendar"}
+      ]
+    },
+    {
+      "slug": "plate-tectonics",
+      "title": "Plate Tectonics",
+      "description": "Moving plates, ridges, faults & continents",
+      "panels": [
+        {"filename":"source-019.webp","title":"Planet Earth — One Dynamic System"},
+        {"filename":"source-104.webp","title":"Planet Earth — Layers and Tectonics"},
+        {"filename":"source-045.webp","title":"The San Andreas Fault"},
+        {"filename":"source-132.webp","title":"The Mid-Atlantic Ridge"},
+        {"filename":"source-048.webp","title":"The Wilson Cycle"},
+        {"filename":"source-110.webp","title":"The Wilson Cycle — How Earth Recycles Its Surface"},
+        {"filename":"source-096.webp","title":"Pangaea"},
+        {"filename":"source-062.webp","title":"Rodinia"},
+        {"filename":"source-008.webp","title":"The March of the Supercontinents"},
+        {"filename":"source-137.webp","title":"The Earth Machine"}
+      ]
+    },
+    {
+      "slug": "supercontinents",
+      "title": "Supercontinents",
+      "description": "Rodinia, Pangaea & the Wilson Cycle",
+      "panels": [
+        {"filename":"source-062.webp","title":"Rodinia"},
+        {"filename":"source-096.webp","title":"Pangaea"},
+        {"filename":"source-008.webp","title":"The March of the Supercontinents"},
+        {"filename":"source-048.webp","title":"The Wilson Cycle"},
+        {"filename":"source-110.webp","title":"The Wilson Cycle — How Earth Recycles Its Surface"}
+      ]
+    },
+    {
+      "slug": "mountain-building",
+      "title": "Mountain Building & Orogenies",
+      "description": "How ranges rise, fold and erode",
+      "panels": [
+        {"filename":"source-010.webp","title":"Mountain-Building Events: Orogenies"},
+        {"filename":"source-011.webp","title":"The Himalayas"},
+        {"filename":"source-084.webp","title":"The Andes Mountains"},
+        {"filename":"source-087.webp","title":"The Rocky Mountains & the Flatirons"},
+        {"filename":"source-091.webp","title":"Mountains — Geologic Features That Build and Shape Them"},
+        {"filename":"source-153.webp","title":"The Matterhorn"},
+        {"filename":"source-164.webp","title":"San Gabriel Mountains"},
+        {"filename":"source-000.webp","title":"Patagonia"}
+      ]
+    },
+    {
+      "slug": "geologic-time-scale",
+      "title": "Geologic Time Scale",
+      "description": "Reading age from rocks, fossils & clocks",
+      "panels": [
+        {"filename":"source-053.webp","title":"Geologic Time Scale"},
+        {"filename":"source-133.webp","title":"Earth's Clock"},
+        {"filename":"source-025.webp","title":"Earth's Calendar"},
+        {"filename":"source-119.webp","title":"Index Fossils Tell Time"},
+        {"filename":"source-143.webp","title":"Reading the Pages of Earth's History"},
+        {"filename":"source-115.webp","title":"How We Know Earth's Age"}
+      ]
+    },
+    {
+      "slug": "rocks-minerals",
+      "title": "Rocks & Minerals",
+      "description": "The materials that build the planet",
+      "panels": [
+        {"filename":"source-159.webp","title":"How to Identify a Rock or Mineral"},
+        {"filename":"source-058.webp","title":"Minerals — The Building Blocks of Our Rocks"},
+        {"filename":"source-037.webp","title":"The Pyramids That Make the Earth's Crust"},
+        {"filename":"source-055.webp","title":"Igneous Rocks — The Mother of All Rocks"},
+        {"filename":"source-033.webp","title":"Igneous Rocks — Crystal Size"},
+        {"filename":"source-042.webp","title":"Igneous Rocks — The Birth of Zircon"},
+        {"filename":"source-046.webp","title":"Igneous Rocks — Bowen's Reaction Series"},
+        {"filename":"source-160.webp","title":"Igneous Rocks — Common Rocks"},
+        {"filename":"source-162.webp","title":"Igneous Rocks — Textures"},
+        {"filename":"source-035.webp","title":"Metamorphic Rocks"},
+        {"filename":"source-009.webp","title":"Sedimentary Rocks"},
+        {"filename":"source-083.webp","title":"The Rock Cycle"}
+      ]
+    },
+    {
+      "slug": "fossils-life",
+      "title": "Fossils & Life",
+      "description": "Life recorded in stone",
+      "panels": [
+        {"filename":"source-034.webp","title":"Burgess Shale"},
+        {"filename":"source-041.webp","title":"John Day Fossil Beds"},
+        {"filename":"source-116.webp","title":"La Brea Tar Pits"},
+        {"filename":"source-119.webp","title":"Index Fossils Tell Time"},
+        {"filename":"source-049.webp","title":"Life From Rocks"},
+        {"filename":"source-068.webp","title":"The Mesozoic Era"},
+        {"filename":"source-028.webp","title":"Dinosaur National Monument"},
+        {"filename":"source-094.webp","title":"The Paleozoic Era"}
+      ]
+    },
+    {
+      "slug": "faults-earthquakes",
+      "title": "Faults & Earthquakes",
+      "description": "Fracture, motion and seismic energy",
+      "panels": [
+        {"filename":"source-045.webp","title":"The San Andreas Fault"},
+        {"filename":"source-060.webp","title":"The Faults of Santa Barbara"},
+        {"filename":"source-078.webp","title":"Earthquakes"},
+        {"filename":"source-012.webp","title":"Structural Geology"},
+        {"filename":"source-150.webp","title":"Golden Gate Ridge"}
+      ]
+    },
+    {
+      "slug": "volcanoes-magma",
+      "title": "Volcanoes & Magma",
+      "description": "Earth's internal heat at the surface",
+      "panels": [
+        {"filename":"source-098.webp","title":"Volcanoes — Earth's Fiery Engine"},
+        {"filename":"source-030.webp","title":"The Ring of Fire"},
+        {"filename":"source-112.webp","title":"Mount St. Helens"},
+        {"filename":"source-138.webp","title":"Krakatoa"},
+        {"filename":"source-147.webp","title":"Santorini"},
+        {"filename":"source-039.webp","title":"Long Valley Caldera"},
+        {"filename":"source-158.webp","title":"Columbia River Basalt Group"},
+        {"filename":"35-hawaii-volcanoes--hawaii-volcanoes-national-park.webp","title":"Hawaiʻi Volcanoes National Park"},
+        {"filename":"04-yellowstone--yellowstone-national-park.webp","title":"Yellowstone National Park"},
+        {"filename":"18-lassen-volcanic--lassen-volcanic-national-park-panel-1.webp","title":"Lassen Volcanic National Park"}
+      ]
+    },
+    {
+      "slug": "erosion-landscapes",
+      "title": "Erosion & Landscapes",
+      "description": "Weathering, rivers, ice, wind & landforms",
+      "panels": [
+        {"filename":"source-057.webp","title":"Weathering & Erosion"},
+        {"filename":"source-059.webp","title":"From Weathering to Rock"},
+        {"filename":"source-144.webp","title":"From Weathering to Rock — Field Edition"},
+        {"filename":"source-026.webp","title":"Reading the Landscape"},
+        {"filename":"source-007.webp","title":"Sculpted Light, Ancient Sand"},
+        {"filename":"source-023.webp","title":"Beaches"},
+        {"filename":"source-071.webp","title":"Deserts"},
+        {"filename":"source-105.webp","title":"Rivers"},
+        {"filename":"source-165.webp","title":"Glaciers"},
+        {"filename":"source-031.webp","title":"Horseshoe Bend"}
+      ]
+    },
+    {
+      "slug": "oceans-coasts-climate",
+      "title": "Oceans, Coasts & Climate",
+      "description": "Seafloor, shorelines, atmosphere & climate",
+      "panels": [
+        {"filename":"source-052.webp","title":"The Ocean Floor"},
+        {"filename":"source-067.webp","title":"The Ocean Floor Tells Time"},
+        {"filename":"source-122.webp","title":"Continental Shelves"},
+        {"filename":"source-109.webp","title":"Hydrothermal Black Smokers"},
+        {"filename":"source-036.webp","title":"Monterey Canyon"},
+        {"filename":"source-023.webp","title":"Beaches"},
+        {"filename":"source-105.webp","title":"Rivers"},
+        {"filename":"source-090.webp","title":"The Milankovitch Cycles"},
+        {"filename":"source-003.webp","title":"The Atmosphere"},
+        {"filename":"source-165.webp","title":"Glaciers"}
+      ]
+    },
+    {
+      "slug": "how-we-know",
+      "title": "How We Know",
+      "description": "Evidence, dating and scientific discovery",
+      "panels": [
+        {"filename":"source-131.webp","title":"How Do We Know?"},
+        {"filename":"source-115.webp","title":"How We Know Earth's Age"},
+        {"filename":"source-032.webp","title":"The Scientists Who Revealed Earth's Story"},
+        {"filename":"source-143.webp","title":"Reading the Pages of Earth's History"},
+        {"filename":"source-113.webp","title":"Rocks Tell Time"},
+        {"filename":"source-119.webp","title":"Index Fossils Tell Time"}
+      ]
+    },
+    {
+      "slug": "maps-field-guides",
+      "title": "Maps & Field Guides",
+      "description": "Tools for reading rocks and landscapes",
+      "panels": [
+        {"filename":"source-026.webp","title":"Reading the Landscape"},
+        {"filename":"source-159.webp","title":"How to Identify a Rock or Mineral"},
+        {"filename":"source-143.webp","title":"Reading the Pages of Earth's History"},
+        {"filename":"source-053.webp","title":"Geologic Time Scale"},
+        {"filename":"source-075.webp","title":"Colorado Plateau — The Grand Staircase of Parks"},
+        {"filename":"source-058.webp","title":"Minerals — The Building Blocks of Our Rocks"}
+      ]
+    },
+    {
+      "slug": "moon",
+      "title": "Beneath Our Feet on the Moon",
+      "description": "Apollo geology and lunar origins",
+      "panels": [
+        {"filename":"source-095.webp","title":"Apollo 17: The Moon's Origin Revealed"}
+      ]
+    },
+    {
+      "slug": "about",
+      "title": "About the Project",
+      "description": "The vision behind Beneath Our Feet",
+      "panels": [
+        {"filename":"source-123.webp","title":"Beneath Our Feet — The Story of Earth's Deep Time"},
+        {"filename":"source-065.webp","title":"Planet Earth"},
+        {"filename":"source-026.webp","title":"Reading the Landscape"}
+      ]
+    }
+  ]
+}
