@@ -1,0 +1,38 @@
+name: Keep Landscape Heading One Line
+
+on:
+  push:
+    paths:
+      - '.github/workflows/keep-landscape-heading-one-line.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Keep desktop homepage heading on one line
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('style.css')
+          css = p.read_text(encoding='utf-8')
+          marker = '/* Keep the opening homepage headline on one line at desktop widths. */'
+          block = '''\n\n/* Keep the opening homepage headline on one line at desktop widths. */\n@media (min-width: 1000px) {\n  body.home .bof-home-intro h2 {\n    max-width: none !important;\n    white-space: nowrap;\n    font-size: clamp(2.2rem, 4.2vw, 4.2rem);\n  }\n}\n'''
+          if marker not in css:
+              p.write_text(css.rstrip() + block, encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add style.css
+          if git diff --cached --quiet; then
+            echo "Heading rule already present."
+          else
+            git commit -m "Keep homepage landscape heading on one line"
+            git push origin main
+          fi
