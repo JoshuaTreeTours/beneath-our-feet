@@ -86,6 +86,36 @@ function bof_render_mobile_hero_from_media( $block_content, $block ) {
 add_filter( 'render_block', 'bof_render_mobile_hero_from_media', 20, 2 );
 
 /**
+ * Link the three homepage category headings without changing the Gutenberg
+ * homepage structure or surrounding card content.
+ */
+function bof_link_home_category_headings( $block_content, $block ) {
+    if ( ! is_front_page() || empty( $block['blockName'] ) || 'core/heading' !== $block['blockName'] ) {
+        return $block_content;
+    }
+
+    $links = array(
+        'Places'      => home_url( '/collections/places/' ),
+        'Deep Time'   => home_url( '/collections/deep-time/' ),
+        'How We Know' => home_url( '/collections/how-we-know/' ),
+    );
+
+    foreach ( $links as $title => $url ) {
+        if ( preg_match( '/<h3\b([^>]*)>\s*' . preg_quote( $title, '/' ) . '\s*<\/h3>/i', $block_content ) ) {
+            return preg_replace(
+                '/(<h3\b[^>]*>)\s*' . preg_quote( $title, '/') . '\s*(<\/h3>)/i',
+                '$1<a href="' . esc_url( $url ) . '">' . esc_html( $title ) . '</a>$2',
+                $block_content,
+                1
+            );
+        }
+    }
+
+    return $block_content;
+}
+add_filter( 'render_block', 'bof_link_home_category_headings', 30, 2 );
+
+/**
  * Seed the National Parks landing page, and apply the current curated landing
  * content once when its theme version changes. After that it remains a normal
  * Gutenberg page that can be edited in WordPress.
