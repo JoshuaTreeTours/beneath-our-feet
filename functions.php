@@ -148,7 +148,7 @@ function bof_seed_source_material_page() {
         return;
     }
 
-    $version  = 4;
+    $version  = 5;
     $existing = get_page_by_path( 'source-material', OBJECT, 'page' );
 
     if ( ! $existing ) {
