@@ -325,6 +325,7 @@ $bof_search_url = static function ( $term ) {
     <section class="bof-menu-section" aria-labelledby="bof-menu-collections">
         <h2 id="bof-menu-collections">Collections</h2>
         <ul>
+            <li><a href="<?php echo esc_url( home_url( '/collections/geological-settings/' ) ); ?>">Geological Settings</a></li>
             <li><a href="<?php echo $bof_search_url( 'How We Know' ); ?>">How We Know</a></li>
             <li><a href="<?php echo $bof_search_url( 'Maps Field Guides' ); ?>">Maps &amp; Field Guides</a></li>
             <li><a href="<?php echo $bof_search_url( 'Moon' ); ?>">Beneath Our Feet on the Moon</a></li>
