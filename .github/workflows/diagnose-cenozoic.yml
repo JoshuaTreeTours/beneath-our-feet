@@ -16,6 +16,7 @@ jobs:
       - name: Scan archive thumbnails for Cenozoic
         run: |
           set -euo pipefail
+          echo "Starting parallel Cenozoic scan"
           if ! command -v tesseract >/dev/null 2>&1; then
             sudo apt-get update -qq
             sudo apt-get install -y -qq tesseract-ocr
@@ -23,7 +24,7 @@ jobs:
           curl --fail --silent --show-error --location \
             'https://beneath-our-feet.com/?bof_cenozoic_audit=1' > /tmp/audit.json
           python3 - <<'PY'
-          import json, pathlib
+          import json
           rows=json.load(open('/tmp/audit.json'))
           with open('/tmp/rows.tsv','w') as f:
               for r in rows:
