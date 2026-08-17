@@ -115,3 +115,21 @@ img { max-width: 100%; height: auto; }
   .bof-footer-social.bof-instagram { font-size:1.55rem; }
   .bof-footer-tagline { font-size:.86rem; line-height:1.25; }
 }
+
+
+/* BOF desktop homepage hero: no overlay, brighter source image */
+@media (min-width: 781px) {
+  body.home .bof-home-hero .wp-block-cover__background,
+  body.home .bof-home-hero .has-background-dim,
+  body.home .bof-home-hero::before {
+    display: none !important;
+    background: transparent !important;
+    opacity: 0 !important;
+  }
+
+  body.home .bof-home-hero > .wp-block-cover__image-background,
+  body.home .bof-home-hero .wp-block-cover__image-background {
+    filter: brightness(1.16) !important;
+    opacity: 1 !important;
+  }
+}
