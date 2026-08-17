@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once get_stylesheet_directory() . '/inc/national-park-library.php';
 require_once get_stylesheet_directory() . '/inc/all-media-import.php';
+require_once get_stylesheet_directory() . '/inc/national-park-reconcile.php';
 
 function bof_setup() {
     add_theme_support( 'title-tag' );
