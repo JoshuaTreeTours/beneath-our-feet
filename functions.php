@@ -132,3 +132,36 @@ function bof_seed_national_parks_page() {
     }
 }
 add_action( 'init', 'bof_seed_national_parks_page', 20 );
+
+/**
+ * Seed a simple Source Material page once. It remains a normal Gutenberg page
+ * afterward so additional references can be added manually in WordPress.
+ */
+function bof_seed_source_material_page() {
+    $content_path = get_stylesheet_directory() . '/content/source-material.html';
+    if ( ! is_readable( $content_path ) ) {
+        return;
+    }
+
+    $content = file_get_contents( $content_path );
+    if ( false === $content || '' === trim( $content ) ) {
+        return;
+    }
+
+    $existing = get_page_by_path( 'source-material', OBJECT, 'page' );
+    if ( $existing ) {
+        return;
+    }
+
+    wp_insert_post(
+        array(
+            'post_title'   => 'Source Material',
+            'post_name'    => 'source-material',
+            'post_status'  => 'publish',
+            'post_type'    => 'page',
+            'post_content' => $content,
+            'post_excerpt' => 'Selected geology and oceanography references used for further reading and exploration.',
+        )
+    );
+}
+add_action( 'init', 'bof_seed_source_material_page', 21 );
