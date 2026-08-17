@@ -51,6 +51,40 @@ function bof_assets() {
 add_action( 'wp_enqueue_scripts', 'bof_assets' );
 
 /**
+ * Keep the Gutenberg mobile hero block intact, but always render it with the
+ * approved WordPress Media Library image (attachment ID 18). This avoids the
+ * blocked theme-level PHP image endpoint that Cloudways returns as 403.
+ */
+function bof_render_mobile_hero_from_media( $block_content, $block ) {
+    if ( ! is_front_page() || empty( $block['blockName'] ) || 'core/cover' !== $block['blockName'] ) {
+        return $block_content;
+    }
+
+    $class_name = isset( $block['attrs']['className'] ) ? (string) $block['attrs']['className'] : '';
+    if ( false === strpos( $class_name, 'bof-mobile-hero' ) ) {
+        return $block_content;
+    }
+
+    $mobile_hero_url = wp_get_attachment_image_url( 18, 'full' );
+    if ( ! $mobile_hero_url ) {
+        return $block_content;
+    }
+
+    $escaped_url = esc_url( $mobile_hero_url );
+
+    // Replace the rendered Cover image src without changing the Gutenberg block itself.
+    $block_content = preg_replace(
+        '/(<img\b[^>]*\bsrc=["\'])[^"\']*(["\'][^>]*>)/i',
+        '$1' . $escaped_url . '$2',
+        $block_content,
+        1
+    );
+
+    return $block_content;
+}
+add_filter( 'render_block', 'bof_render_mobile_hero_from_media', 20, 2 );
+
+/**
  * Seed the National Parks landing page, and apply the current curated landing
  * content once when its theme version changes. After that it remains a normal
  * Gutenberg page that can be edited in WordPress.
