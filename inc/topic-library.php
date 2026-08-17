@@ -53,6 +53,50 @@ function bof_topic_attachment_id( $filename ) {
     return $ids ? (int) $ids[0] : 0;
 }
 
+function bof_topic_attachment_id_by_term( $term ) {
+    $term = sanitize_text_field( $term );
+    if ( '' === $term ) {
+        return 0;
+    }
+
+    $ids = get_posts(
+        array(
+            'post_type'      => 'attachment',
+            'post_status'    => 'inherit',
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
+            's'              => $term,
+        )
+    );
+    if ( $ids ) {
+        return (int) $ids[0];
+    }
+
+    $ids = get_posts(
+        array(
+            'post_type'      => 'attachment',
+            'post_status'    => 'inherit',
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
+            'meta_query'     => array(
+                'relation' => 'OR',
+                array(
+                    'key'     => '_wp_attachment_image_alt',
+                    'value'   => $term,
+                    'compare' => 'LIKE',
+                ),
+                array(
+                    'key'     => '_wp_attached_file',
+                    'value'   => $term,
+                    'compare' => 'LIKE',
+                ),
+            ),
+        )
+    );
+
+    return $ids ? (int) $ids[0] : 0;
+}
+
 function bof_topic_root_page() {
     $root = get_page_by_path( 'collections', OBJECT, 'page' );
     if ( $root ) {
@@ -133,7 +177,7 @@ function bof_topic_create_panel( $topic_page_id, $topic, $panel, $attachment_id,
     update_post_meta( $page_id, '_bof_topic_slug', sanitize_title( $topic['slug'] ) );
     update_post_meta( $page_id, '_bof_topic_title', sanitize_text_field( $topic['title'] ) );
     update_post_meta( $page_id, '_bof_topic_panel_title', sanitize_text_field( $panel['title'] ) );
-    update_post_meta( $page_id, '_bof_topic_source_filename', sanitize_file_name( $panel['filename'] ) );
+    update_post_meta( $page_id, '_bof_topic_source_filename', isset( $panel['filename'] ) ? sanitize_file_name( $panel['filename'] ) : '' );
     return (int) $page_id;
 }
 
@@ -173,6 +217,76 @@ function bof_topic_seed_library() {
     }
 }
 add_action( 'init', 'bof_topic_seed_library', 35 );
+
+/**
+ * Restore the Cenozoic panel to Deep Time immediately after the Mesozoic.
+ * This intentionally reuses the existing Cenozoic image already present in
+ * the WordPress Media Library and leaves the rest of the topic manifest alone.
+ */
+function bof_topic_seed_cenozoic_panel() {
+    $version = 1;
+    if ( (int) get_option( 'bof_deep_time_cenozoic_version', 0 ) >= $version ) {
+        return;
+    }
+
+    $root = get_page_by_path( 'collections', OBJECT, 'page' );
+    if ( ! $root ) {
+        return;
+    }
+
+    $deep_time = bof_topic_find_child_page( $root->ID, 'deep-time' );
+    if ( ! $deep_time ) {
+        return;
+    }
+
+    $attachment_id = bof_topic_attachment_id_by_term( 'Cenozoic' );
+    if ( ! $attachment_id ) {
+        return;
+    }
+
+    $existing = bof_topic_find_child_page( $deep_time->ID, 'the-cenozoic-era' );
+    if ( ! $existing ) {
+        $later_pages = get_posts(
+            array(
+                'post_type'      => 'page',
+                'post_status'    => 'publish',
+                'post_parent'    => (int) $deep_time->ID,
+                'posts_per_page' => -1,
+                'meta_key'       => '_bof_topic_panel_order',
+                'orderby'        => 'meta_value_num',
+                'order'          => 'DESC',
+            )
+        );
+
+        foreach ( $later_pages as $later_page ) {
+            $order = (int) get_post_meta( $later_page->ID, '_bof_topic_panel_order', true );
+            if ( $order >= 7 ) {
+                update_post_meta( $later_page->ID, '_bof_topic_panel_order', $order + 1 );
+                wp_update_post(
+                    array(
+                        'ID'         => $later_page->ID,
+                        'menu_order' => $order + 1,
+                    )
+                );
+            }
+        }
+    }
+
+    $topic = array(
+        'slug'  => 'deep-time',
+        'title' => 'Deep Time',
+    );
+    $panel = array(
+        'title'    => 'The Cenozoic Era',
+        'filename' => '',
+    );
+
+    if ( bof_topic_create_panel( $deep_time->ID, $topic, $panel, $attachment_id, 7 ) ) {
+        update_option( 'bof_deep_time_cenozoic_version', $version );
+        flush_rewrite_rules( false );
+    }
+}
+add_action( 'init', 'bof_topic_seed_cenozoic_panel', 36 );
 
 function bof_topic_template_include( $template ) {
     if ( ! is_page() ) {
