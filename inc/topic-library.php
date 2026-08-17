@@ -243,6 +243,44 @@ function bof_topic_seed_cenozoic_panel() {
 }
 add_action( 'init', 'bof_topic_seed_cenozoic_panel', 36 );
 
+/**
+ * Keep the Deep Time overview panel permanently first, ahead of the Hadean.
+ * This updates the existing WordPress page order directly, independent of the
+ * manifest seed version, so a previously-created collection is corrected too.
+ */
+function bof_topic_pin_deep_time_overview_first() {
+    $version = 1;
+    if ( (int) get_option( 'bof_deep_time_overview_first_version', 0 ) >= $version ) {
+        return;
+    }
+
+    $root = get_page_by_path( 'collections', OBJECT, 'page' );
+    if ( ! $root ) {
+        return;
+    }
+
+    $deep_time = bof_topic_find_child_page( $root->ID, 'deep-time' );
+    if ( ! $deep_time ) {
+        return;
+    }
+
+    $overview = bof_topic_find_child_page( $deep_time->ID, 'the-story-of-earths-deep-time' );
+    if ( ! $overview ) {
+        return;
+    }
+
+    update_post_meta( $overview->ID, '_bof_topic_panel_order', 0 );
+    wp_update_post(
+        array(
+            'ID'         => $overview->ID,
+            'menu_order' => 0,
+        )
+    );
+
+    update_option( 'bof_deep_time_overview_first_version', $version );
+}
+add_action( 'init', 'bof_topic_pin_deep_time_overview_first', 37 );
+
 function bof_topic_template_include( $template ) {
     if ( ! is_page() ) {
         return $template;
