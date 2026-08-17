@@ -9,6 +9,73 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+function bof_neo_paleozoic_image_bytes() {
+    $encoded = '';
+    for ( $i = 1; $i <= 6; $i++ ) {
+        $part = get_stylesheet_directory() . '/assets/panel-staging/neo-paleozoic.part' . str_pad( (string) $i, 2, '0', STR_PAD_LEFT );
+        if ( ! is_readable( $part ) ) {
+            return false;
+        }
+        $piece = file_get_contents( $part );
+        if ( false === $piece ) {
+            return false;
+        }
+        $encoded .= trim( $piece );
+    }
+
+    $bytes = base64_decode( $encoded, true );
+    return ( false === $bytes || '' === $bytes ) ? false : $bytes;
+}
+
+function bof_neo_paleozoic_register_file( $attachment_id, $filename ) {
+    $attachment_id = (int) $attachment_id;
+    if ( ! $attachment_id ) {
+        return 0;
+    }
+
+    $attached_file = get_attached_file( $attachment_id );
+    $usable_file   = $attached_file && is_readable( $attached_file ) && filesize( $attached_file ) > 1000;
+
+    if ( ! $usable_file ) {
+        $bytes = bof_neo_paleozoic_image_bytes();
+        if ( false === $bytes ) {
+            return 0;
+        }
+
+        $upload = wp_upload_bits( $filename, null, $bytes );
+        if ( ! empty( $upload['error'] ) || empty( $upload['file'] ) ) {
+            return 0;
+        }
+
+        // This is the critical WordPress attachment-to-file registration.
+        update_attached_file( $attachment_id, $upload['file'] );
+        $attached_file = $upload['file'];
+
+        wp_update_post(
+            array(
+                'ID'             => $attachment_id,
+                'post_mime_type' => 'image/webp',
+                'guid'            => $upload['url'],
+            )
+        );
+    } else {
+        // Re-register an existing physical file if older code created the post
+        // without the standard _wp_attached_file relationship.
+        update_attached_file( $attachment_id, $attached_file );
+    }
+
+    require_once ABSPATH . 'wp-admin/includes/image.php';
+    $metadata = wp_generate_attachment_metadata( $attachment_id, $attached_file );
+    if ( $metadata ) {
+        wp_update_attachment_metadata( $attachment_id, $metadata );
+    }
+
+    update_post_meta( $attachment_id, '_wp_attachment_image_alt', 'The Neo-Paleozoic: Age of Coal Forests and Crisis — 359 to 252 million years ago' );
+    update_post_meta( $attachment_id, '_bof_archive_source_filename', $filename );
+
+    return wp_get_attachment_url( $attachment_id ) ? $attachment_id : 0;
+}
+
 function bof_neo_paleozoic_attachment_id() {
     $filename = 'neo-paleozoic-age-of-coal-forests-and-crisis.webp';
 
@@ -23,24 +90,11 @@ function bof_neo_paleozoic_attachment_id() {
         )
     );
     if ( $ids ) {
-        return (int) $ids[0];
+        return bof_neo_paleozoic_register_file( (int) $ids[0], $filename );
     }
 
-    $encoded = '';
-    for ( $i = 1; $i <= 6; $i++ ) {
-        $part = get_stylesheet_directory() . '/assets/panel-staging/neo-paleozoic.part' . str_pad( (string) $i, 2, '0', STR_PAD_LEFT );
-        if ( ! is_readable( $part ) ) {
-            return 0;
-        }
-        $piece = file_get_contents( $part );
-        if ( false === $piece ) {
-            return 0;
-        }
-        $encoded .= trim( $piece );
-    }
-
-    $bytes = base64_decode( $encoded, true );
-    if ( false === $bytes || '' === $bytes ) {
+    $bytes = bof_neo_paleozoic_image_bytes();
+    if ( false === $bytes ) {
         return 0;
     }
 
@@ -56,6 +110,7 @@ function bof_neo_paleozoic_attachment_id() {
             'post_content'   => '',
             'post_excerpt'   => 'Late Paleozoic geology panel covering the Mississippian, Pennsylvanian, Permian, coal forests, and the end-Permian mass extinction.',
             'post_status'    => 'inherit',
+            'guid'           => $upload['url'],
         ),
         $upload['file']
     );
@@ -64,20 +119,12 @@ function bof_neo_paleozoic_attachment_id() {
         return 0;
     }
 
-    require_once ABSPATH . 'wp-admin/includes/image.php';
-    $metadata = wp_generate_attachment_metadata( $attachment_id, $upload['file'] );
-    if ( $metadata ) {
-        wp_update_attachment_metadata( $attachment_id, $metadata );
-    }
-
-    update_post_meta( $attachment_id, '_wp_attachment_image_alt', 'The Neo-Paleozoic: Age of Coal Forests and Crisis — 359 to 252 million years ago' );
-    update_post_meta( $attachment_id, '_bof_archive_source_filename', $filename );
-
-    return (int) $attachment_id;
+    update_attached_file( $attachment_id, $upload['file'] );
+    return bof_neo_paleozoic_register_file( $attachment_id, $filename );
 }
 
 function bof_seed_neo_paleozoic_panel() {
-    $version = 1;
+    $version = 2;
     if ( (int) get_option( 'bof_neo_paleozoic_panel_version', 0 ) >= $version ) {
         return;
     }
