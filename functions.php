@@ -16,6 +16,8 @@ require_once get_stylesheet_directory() . '/inc/neo-paleozoic-panel.php';
 require_once get_stylesheet_directory() . '/inc/menu-topic-redirects.php';
 require_once get_stylesheet_directory() . '/inc/site-icon.php';
 require_once get_stylesheet_directory() . '/inc/home-material-cards.php';
+require_once get_stylesheet_directory() . '/inc/structured-data.php';
+require_once get_stylesheet_directory() . '/inc/structured-data-socials.php';
 
 function bof_setup() {
     add_theme_support( 'title-tag' );
