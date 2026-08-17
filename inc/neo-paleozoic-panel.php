@@ -1,52 +1,43 @@
 <?php
 /**
  * Add the missing late Paleozoic / Permian extinction panel to Deep Time.
- * The supplied artwork is stored as six base64 staging parts in the theme,
- * reconstructed into the WordPress Media Library and also available through a
- * direct image endpoint as a reliable fallback.
+ * The supplied artwork is stored as six base64 staging parts in the theme.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-function bof_neo_paleozoic_image_bytes() {
+function bof_neo_paleozoic_image_base64() {
     $encoded = '';
     for ( $i = 1; $i <= 6; $i++ ) {
         $part = get_stylesheet_directory() . '/assets/panel-staging/neo-paleozoic.part' . str_pad( (string) $i, 2, '0', STR_PAD_LEFT );
         if ( ! is_readable( $part ) ) {
-            return false;
+            return '';
         }
         $piece = file_get_contents( $part );
         if ( false === $piece ) {
-            return false;
+            return '';
         }
         $encoded .= trim( $piece );
     }
+    return $encoded;
+}
 
+function bof_neo_paleozoic_image_bytes() {
+    $encoded = bof_neo_paleozoic_image_base64();
+    if ( '' === $encoded ) {
+        return false;
+    }
     $bytes = base64_decode( $encoded, true );
     return ( false === $bytes || '' === $bytes ) ? false : $bytes;
 }
 
-/** Serve the exact supplied panel without depending on attachment metadata. */
-function bof_serve_neo_paleozoic_panel_image() {
-    if ( empty( $_GET['bof_neo_paleozoic_image'] ) ) {
-        return;
-    }
-
-    $bytes = bof_neo_paleozoic_image_bytes();
-    if ( false === $bytes ) {
-        status_header( 404 );
-        exit;
-    }
-
-    nocache_headers();
-    header( 'Content-Type: image/webp' );
-    header( 'Content-Length: ' . strlen( $bytes ) );
-    echo $bytes;
-    exit;
+/** Reliable browser-ready source that bypasses uploads, attachment metadata and endpoints. */
+function bof_neo_paleozoic_data_uri() {
+    $encoded = bof_neo_paleozoic_image_base64();
+    return '' === $encoded ? '' : 'data:image/webp;base64,' . $encoded;
 }
-add_action( 'init', 'bof_serve_neo_paleozoic_panel_image', 0 );
 
 function bof_neo_paleozoic_register_file( $attachment_id, $filename ) {
     $attachment_id = (int) $attachment_id;
@@ -142,7 +133,7 @@ function bof_neo_paleozoic_attachment_id() {
 }
 
 function bof_seed_neo_paleozoic_panel() {
-    $version = 3;
+    $version = 4;
 
     $root = get_page_by_path( 'collections', OBJECT, 'page' );
     if ( ! $root ) {
@@ -162,6 +153,7 @@ function bof_seed_neo_paleozoic_panel() {
     $panel_title = 'The Neo-Paleozoic: Age of Coal Forests and Crisis';
     $existing = bof_topic_find_child_page( $deep_time->ID, sanitize_title( $panel_title ) );
 
+    // Keep this panel at position 6: after Paleozoic and immediately before Mesozoic.
     if ( ! $existing ) {
         $later_pages = get_posts(
             array(
