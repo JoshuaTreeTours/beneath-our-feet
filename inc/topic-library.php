@@ -323,3 +323,35 @@ function bof_topic_pages() {
     }
     return $pages;
 }
+
+/** Temporary media audit endpoint used only to identify the existing Neo-Paleozoic panel. */
+function bof_neo_paleozoic_media_audit() {
+    if ( empty( $_GET['bof_neo_paleozoic_audit'] ) ) {
+        return;
+    }
+
+    $attachments = get_posts(
+        array(
+            'post_type'      => 'attachment',
+            'post_status'    => 'inherit',
+            'posts_per_page' => -1,
+            'orderby'        => 'ID',
+            'order'          => 'ASC',
+        )
+    );
+
+    $rows = array();
+    foreach ( $attachments as $attachment ) {
+        $filename = get_post_meta( $attachment->ID, '_bof_archive_source_filename', true );
+        $url      = wp_get_attachment_image_url( $attachment->ID, 'large' );
+        if ( $filename && $url ) {
+            $rows[] = array(
+                'filename' => $filename,
+                'url'      => $url,
+            );
+        }
+    }
+
+    wp_send_json( $rows );
+}
+add_action( 'init', 'bof_neo_paleozoic_media_audit', 1 );
