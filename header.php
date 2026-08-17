@@ -328,8 +328,8 @@ $bof_search_url = static function ( $term ) {
             <li><a href="<?php echo $bof_search_url( 'How We Know' ); ?>">How We Know</a></li>
             <li><a href="<?php echo $bof_search_url( 'Maps Field Guides' ); ?>">Maps &amp; Field Guides</a></li>
             <li><a href="<?php echo $bof_search_url( 'Moon' ); ?>">Beneath Our Feet on the Moon</a></li>
-            <li><a href="<?php echo esc_url( home_url( '/source-material/' ) ); ?>">Source Material</a></li>
             <li><a href="<?php echo $bof_search_url( 'About Beneath Our Feet' ); ?>">About the Project</a></li>
+            <li><a href="<?php echo esc_url( home_url( '/source-material/' ) ); ?>">Source Material</a></li>
         </ul>
     </section>
 </nav>
