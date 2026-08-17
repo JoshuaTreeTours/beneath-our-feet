@@ -63,10 +63,12 @@ function bof_replace_home_series_with_material_cards( $block_content, $block ) {
         array( 'title' => 'Oceans, Coasts & Climate', 'slug' => 'oceans-coasts-climate', 'image' => 'source-036.webp' ),
     );
 
+    $lens_icon = '<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><circle cx="27" cy="27" r="15" fill="none" stroke="currentColor" stroke-width="3"/><path d="M38 38 53 53" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M18 27h18M21 22h12M21 32h12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>';
+
     $html  = '<section class="bof-material-card-section" aria-label="Explore geology topics">';
     $html .= '<div class="bof-material-card-heading">';
     $html .= '<p class="bof-material-card-eyebrow">Explore the Science</p>';
-    $html .= '<h2 class="bof-material-card-title-heading">How Earth Works</h2>';
+    $html .= '<div class="bof-material-card-title-row"><h2 class="bof-material-card-title-heading">How Earth Works</h2><span class="bof-material-card-heading-icon" aria-hidden="true">' . $lens_icon . '</span></div>';
     $html .= '</div>';
     $html .= '<div class="bof-material-card-grid">';
 
@@ -95,14 +97,17 @@ function bof_material_card_styles() {
     .bof-material-card-section{width:min(1180px,90vw);margin:clamp(4rem,8vw,7rem) auto clamp(5rem,9vw,8rem)}
     .bof-material-card-heading{margin:0 0 1.8rem}
     .bof-material-card-eyebrow{margin:0 0 .55rem;color:var(--bof-gold);font-size:.8rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+    .bof-material-card-title-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
     .bof-material-card-title-heading{margin:0;color:var(--bof-ink);font-size:clamp(2.4rem,5vw,4.5rem);line-height:.98;font-weight:500}
+    .bof-material-card-heading-icon{flex:0 0 auto;width:3.4rem;height:3.4rem;color:#a8782f;opacity:.38;margin-right:.25rem}
+    .bof-material-card-heading-icon svg{display:block;width:100%;height:100%}
     .bof-material-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
     .bof-material-card{position:relative;display:flex;align-items:flex-end;min-height:300px;overflow:hidden;border:1px solid var(--bof-border);background:#233126 center center/cover no-repeat;color:#fff8e9;text-decoration:none;isolation:isolate;transition:transform .18s ease,box-shadow .18s ease}
     .bof-material-card:hover,.bof-material-card:focus-visible{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.18);outline:2px solid #d7b56e;outline-offset:3px}
     .bof-material-card-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(11,16,12,.04) 30%,rgba(11,16,12,.82) 100%)}
     .bof-material-card-title{display:block;width:100%;padding:1.25rem 1.35rem 1.4rem;font-size:clamp(1.35rem,2.2vw,2rem);line-height:1.05;font-weight:600;text-shadow:0 2px 10px rgba(0,0,0,.55)}
     @media(max-width:900px){.bof-material-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:600px){.bof-material-card-section{width:92vw;margin-top:3rem;margin-bottom:4rem}.bof-material-card-grid{grid-template-columns:1fr;gap:14px}.bof-material-card{min-height:230px}.bof-material-card-heading{margin-bottom:1.35rem}}
+    @media(max-width:600px){.bof-material-card-section{width:92vw;margin-top:3rem;margin-bottom:4rem}.bof-material-card-grid{grid-template-columns:1fr;gap:14px}.bof-material-card{min-height:230px}.bof-material-card-heading{margin-bottom:1.35rem}.bof-material-card-title-row{align-items:flex-start}.bof-material-card-heading-icon{width:3rem;height:3rem;opacity:.34;margin-top:.15rem}}
     ';
 
     wp_add_inline_style( 'beneath-our-feet-style', $css );
