@@ -48,7 +48,7 @@ img { max-width: 100%; height: auto; }
 .bof-page-content > p { font-size:clamp(1.05rem,1.8vw,1.28rem); }
 .bof-page-content .wp-block-image,.bof-page-content .wp-block-gallery,.bof-page-content .wp-block-cover,.bof-page-content .wp-block-columns,.bof-page-content .wp-block-group,.bof-page-content .wp-block-media-text { margin-top:2rem; margin-bottom:2rem; }
 .bof-page-content > .bof-home-hero { width:100%; margin-top:0; margin-bottom:0; min-height:min(74vh,760px)!important; border-bottom:1px solid #8d754f; }
-.bof-home-hero .wp-block-cover__background { background:linear-gradient(90deg,rgba(25,22,16,.56) 0%,rgba(25,22,16,.18) 52%,rgba(25,22,16,.04) 100%)!important; opacity:1!important; }
+.bof-home-hero .wp-block-cover__background { background:transparent!important; opacity:0!important; }
 .bof-home-hero .wp-block-cover__inner-container { width:100%; color:#fff8e9; }
 .bof-desktop-hero .wp-block-cover__inner-container { display:none!important; }
 .bof-home-hero-copy { width:min(720px,90vw); margin:0 0 clamp(2.5rem,8vw,6rem) 7vw!important; color:#fff8e9; text-shadow:0 2px 18px rgba(0,0,0,.55); }
