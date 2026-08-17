@@ -134,8 +134,8 @@ function bof_seed_national_parks_page() {
 add_action( 'init', 'bof_seed_national_parks_page', 20 );
 
 /**
- * Seed a simple Source Material page once. It remains a normal Gutenberg page
- * afterward so additional references can be added manually in WordPress.
+ * Seed and version the Source Material page from the theme. After this update,
+ * it remains a normal Gutenberg page and can be edited manually in WordPress.
  */
 function bof_seed_source_material_page() {
     $content_path = get_stylesheet_directory() . '/content/source-material.html';
@@ -148,20 +148,35 @@ function bof_seed_source_material_page() {
         return;
     }
 
+    $version  = 2;
     $existing = get_page_by_path( 'source-material', OBJECT, 'page' );
-    if ( $existing ) {
+
+    if ( ! $existing ) {
+        $page_id = wp_insert_post(
+            array(
+                'post_title'   => 'Source Material',
+                'post_name'    => 'source-material',
+                'post_status'  => 'publish',
+                'post_type'    => 'page',
+                'post_content' => $content,
+                'post_excerpt' => 'Selected geology and oceanography references used for further reading and exploration.',
+            )
+        );
+        if ( $page_id && ! is_wp_error( $page_id ) ) {
+            update_option( 'bof_source_material_version', $version );
+        }
         return;
     }
 
-    wp_insert_post(
-        array(
-            'post_title'   => 'Source Material',
-            'post_name'    => 'source-material',
-            'post_status'  => 'publish',
-            'post_type'    => 'page',
-            'post_content' => $content,
-            'post_excerpt' => 'Selected geology and oceanography references used for further reading and exploration.',
-        )
-    );
+    if ( (int) get_option( 'bof_source_material_version', 1 ) < $version ) {
+        wp_update_post(
+            array(
+                'ID'           => $existing->ID,
+                'post_content' => $content,
+                'post_excerpt' => 'Selected geology and oceanography references used for further reading and exploration.',
+            )
+        );
+        update_option( 'bof_source_material_version', $version );
+    }
 }
 add_action( 'init', 'bof_seed_source_material_page', 21 );
