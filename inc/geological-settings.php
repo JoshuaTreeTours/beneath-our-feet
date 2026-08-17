@@ -3,9 +3,8 @@
  * Geological Settings collection.
  *
  * Builds a curated nine-panel collection from images already uploaded to the
- * WordPress media directory. The supplied URLs are resolved back to Media
- * Library attachment IDs so the existing topic viewer can render them without
- * duplicating the artwork.
+ * WordPress media directory. WebP derivatives are generated beside the source
+ * artwork and used by this collection for substantially faster delivery.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,34 +12,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Resolve one supplied uploads URL to an attachment ID.
- *
- * The normal attachment_url_to_postid() lookup is tried first. If the image
- * exists on disk but WordPress has no attachment row for it, create that row
- * against the existing file rather than downloading or duplicating the image.
+ * Resolve a supplied uploads URL to its local uploads path.
  */
-function bof_geological_settings_attachment_id( $url, $title ) {
-    $url = esc_url_raw( $url );
-    if ( ! $url ) {
-        return 0;
-    }
-
-    $attachment_id = attachment_url_to_postid( $url );
-    if ( $attachment_id ) {
-        return (int) $attachment_id;
-    }
-
-    $url_path = (string) wp_parse_url( $url, PHP_URL_PATH );
+function bof_geological_settings_upload_path( $url ) {
+    $url_path = (string) wp_parse_url( esc_url_raw( $url ), PHP_URL_PATH );
     $marker   = '/wp-content/uploads/';
     $position = strpos( $url_path, $marker );
     if ( false === $position ) {
-        return 0;
+        return array();
     }
 
     $relative_path = ltrim( substr( $url_path, $position + strlen( $marker ) ), '/' );
     if ( ! $relative_path ) {
+        return array();
+    }
+
+    $uploads = wp_upload_dir();
+    return array(
+        'relative' => $relative_path,
+        'absolute' => trailingslashit( $uploads['basedir'] ) . $relative_path,
+        'baseurl'  => trailingslashit( $uploads['baseurl'] ),
+    );
+}
+
+/**
+ * Return an attachment ID for a WebP derivative of one Geological Settings
+ * source image, creating the derivative and Media Library row only when needed.
+ */
+function bof_geological_settings_webp_attachment_id( $url, $title ) {
+    $source = bof_geological_settings_upload_path( $url );
+    if ( empty( $source['absolute'] ) || ! is_readable( $source['absolute'] ) ) {
         return 0;
     }
+
+    $source_relative = $source['relative'];
+    $source_info     = pathinfo( $source_relative );
+    $directory       = ! empty( $source_info['dirname'] ) && '.' !== $source_info['dirname'] ? trailingslashit( $source_info['dirname'] ) : '';
+    $webp_relative   = $directory . $source_info['filename'] . '.webp';
+    $uploads         = wp_upload_dir();
+    $webp_path       = trailingslashit( $uploads['basedir'] ) . $webp_relative;
+    $webp_url        = trailingslashit( $uploads['baseurl'] ) . $webp_relative;
 
     $existing = get_posts(
         array(
@@ -49,29 +60,39 @@ function bof_geological_settings_attachment_id( $url, $title ) {
             'posts_per_page' => 1,
             'fields'         => 'ids',
             'meta_key'       => '_wp_attached_file',
-            'meta_value'     => $relative_path,
+            'meta_value'     => $webp_relative,
         )
     );
+    if ( $existing && is_readable( $webp_path ) ) {
+        return (int) $existing[0];
+    }
+
+    if ( ! is_readable( $webp_path ) ) {
+        $editor = wp_get_image_editor( $source['absolute'] );
+        if ( is_wp_error( $editor ) ) {
+            return 0;
+        }
+
+        $editor->set_quality( 82 );
+        $saved = $editor->save( $webp_path, 'image/webp' );
+        if ( is_wp_error( $saved ) || ! is_readable( $webp_path ) ) {
+            return 0;
+        }
+    }
+
     if ( $existing ) {
         return (int) $existing[0];
     }
 
-    $uploads   = wp_upload_dir();
-    $file_path = trailingslashit( $uploads['basedir'] ) . $relative_path;
-    if ( ! is_readable( $file_path ) ) {
-        return 0;
-    }
-
-    $filetype = wp_check_filetype( basename( $file_path ), null );
     $attachment_id = wp_insert_attachment(
         array(
-            'guid'           => $url,
-            'post_mime_type' => $filetype['type'] ? $filetype['type'] : 'image/png',
+            'guid'           => esc_url_raw( $webp_url ),
+            'post_mime_type' => 'image/webp',
             'post_title'     => sanitize_text_field( $title ),
             'post_content'   => '',
             'post_status'    => 'inherit',
         ),
-        $file_path,
+        $webp_path,
         0,
         true
     );
@@ -80,10 +101,11 @@ function bof_geological_settings_attachment_id( $url, $title ) {
         return 0;
     }
 
-    update_attached_file( $attachment_id, $file_path );
+    update_attached_file( $attachment_id, $webp_path );
+    update_post_meta( $attachment_id, '_bof_geological_settings_source', $source_relative );
 
     require_once ABSPATH . 'wp-admin/includes/image.php';
-    $metadata = wp_generate_attachment_metadata( $attachment_id, $file_path );
+    $metadata = wp_generate_attachment_metadata( $attachment_id, $webp_path );
     if ( is_array( $metadata ) ) {
         wp_update_attachment_metadata( $attachment_id, $metadata );
     }
@@ -91,9 +113,9 @@ function bof_geological_settings_attachment_id( $url, $title ) {
     return (int) $attachment_id;
 }
 
-/** Seed the collection and preserve the requested panel order. */
+/** Seed or refresh the collection while preserving the requested panel order. */
 function bof_seed_geological_settings_collection() {
-    $version = 1;
+    $version = 2;
     if ( (int) get_option( 'bof_geological_settings_version', 0 ) >= $version ) {
         return;
     }
@@ -159,14 +181,14 @@ function bof_seed_geological_settings_collection() {
 
     $created = 0;
     foreach ( $panels as $index => $item ) {
-        $attachment_id = bof_geological_settings_attachment_id( $item['url'], $item['title'] );
+        $attachment_id = bof_geological_settings_webp_attachment_id( $item['url'], $item['title'] );
         if ( ! $attachment_id ) {
             continue;
         }
 
         $panel = array(
             'title'    => $item['title'],
-            'filename' => sanitize_file_name( basename( (string) wp_parse_url( $item['url'], PHP_URL_PATH ) ) ),
+            'filename' => sanitize_file_name( pathinfo( (string) wp_parse_url( $item['url'], PHP_URL_PATH ), PATHINFO_FILENAME ) . '.webp' ),
         );
 
         if ( bof_topic_create_panel( $topic_page_id, $topic, $panel, $attachment_id, $index + 1 ) ) {
