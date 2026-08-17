@@ -22,17 +22,15 @@ jobs:
           from pathlib import Path
           p = Path('style.css')
           s = p.read_text()
-          marker = '/* BOF desktop homepage hero: no overlay, brighter source image */'
-          if marker not in s:
-              s += '''\n\n/* BOF desktop homepage hero: no overlay, brighter source image */\n@media (min-width: 781px) {\n  body.home .bof-home-hero .wp-block-cover__background,\n  body.home .bof-home-hero .has-background-dim,\n  body.home .bof-home-hero::before {\n    display: none !important;\n    background: transparent !important;\n    opacity: 0 !important;\n  }\n\n  body.home .bof-home-hero > .wp-block-cover__image-background,\n  body.home .bof-home-hero .wp-block-cover__image-background {\n    filter: brightness(1.16) !important;\n    opacity: 1 !important;\n  }\n}\n'''
-              p.write_text(s)
+          s = s.replace('filter: brightness(1.16) !important;', 'filter: brightness(1.35) !important;')
+          p.write_text(s)
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add style.css
           if git diff --cached --quiet; then
-            echo "Hero lightening already applied."
+            echo "Hero brightness already at requested level."
           else
-            git commit -m "Lighten desktop homepage hero"
+            git commit -m "Brighten desktop homepage hero further"
             git push origin main
           fi
