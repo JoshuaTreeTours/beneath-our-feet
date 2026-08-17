@@ -32,11 +32,12 @@ function bof_setup() {
 add_action( 'after_setup_theme', 'bof_setup' );
 
 function bof_assets() {
+    $theme_css = get_stylesheet_directory() . '/style.css';
     wp_enqueue_style(
         'beneath-our-feet-style',
         get_stylesheet_uri(),
         array(),
-        wp_get_theme()->get( 'Version' )
+        is_readable( $theme_css ) ? filemtime( $theme_css ) : wp_get_theme()->get( 'Version' )
     );
 
     /* The desktop hero image already contains the Beneath Our Feet title and
