@@ -189,3 +189,12 @@ body.home .bof-home-intro {
   .bof-material-card-grid { grid-template-columns:1fr; }
   .bof-material-card { min-height:220px; }
 }
+
+/* Keep the opening homepage headline on one line at desktop widths. */
+@media (min-width: 1000px) {
+  body.home .bof-home-intro h2 {
+    max-width: none !important;
+    white-space: nowrap;
+    font-size: clamp(2.2rem, 4.2vw, 4.2rem);
+  }
+}
