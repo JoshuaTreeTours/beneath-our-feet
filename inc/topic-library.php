@@ -53,50 +53,6 @@ function bof_topic_attachment_id( $filename ) {
     return $ids ? (int) $ids[0] : 0;
 }
 
-function bof_topic_attachment_id_by_term( $term ) {
-    $term = sanitize_text_field( $term );
-    if ( '' === $term ) {
-        return 0;
-    }
-
-    $ids = get_posts(
-        array(
-            'post_type'      => 'attachment',
-            'post_status'    => 'inherit',
-            'posts_per_page' => 1,
-            'fields'         => 'ids',
-            's'              => $term,
-        )
-    );
-    if ( $ids ) {
-        return (int) $ids[0];
-    }
-
-    $ids = get_posts(
-        array(
-            'post_type'      => 'attachment',
-            'post_status'    => 'inherit',
-            'posts_per_page' => 1,
-            'fields'         => 'ids',
-            'meta_query'     => array(
-                'relation' => 'OR',
-                array(
-                    'key'     => '_wp_attachment_image_alt',
-                    'value'   => $term,
-                    'compare' => 'LIKE',
-                ),
-                array(
-                    'key'     => '_wp_attached_file',
-                    'value'   => $term,
-                    'compare' => 'LIKE',
-                ),
-            ),
-        )
-    );
-
-    return $ids ? (int) $ids[0] : 0;
-}
-
 function bof_topic_root_page() {
     $root = get_page_by_path( 'collections', OBJECT, 'page' );
     if ( $root ) {
@@ -219,12 +175,11 @@ function bof_topic_seed_library() {
 add_action( 'init', 'bof_topic_seed_library', 35 );
 
 /**
- * Restore the Cenozoic panel to Deep Time immediately after the Mesozoic.
- * This intentionally reuses the existing Cenozoic image already present in
- * the WordPress Media Library and leaves the rest of the topic manifest alone.
+ * Restore the missing Cenozoic panel to Deep Time immediately after Mesozoic.
+ * source-044.webp is the imported "Cenozoic Era: Age of Mammals" artwork.
  */
 function bof_topic_seed_cenozoic_panel() {
-    $version = 1;
+    $version = 2;
     if ( (int) get_option( 'bof_deep_time_cenozoic_version', 0 ) >= $version ) {
         return;
     }
@@ -239,7 +194,7 @@ function bof_topic_seed_cenozoic_panel() {
         return;
     }
 
-    $attachment_id = bof_topic_attachment_id_by_term( 'Cenozoic' );
+    $attachment_id = bof_topic_attachment_id( 'source-044.webp' );
     if ( ! $attachment_id ) {
         return;
     }
@@ -278,7 +233,7 @@ function bof_topic_seed_cenozoic_panel() {
     );
     $panel = array(
         'title'    => 'The Cenozoic Era',
-        'filename' => '',
+        'filename' => 'source-044.webp',
     );
 
     if ( bof_topic_create_panel( $deep_time->ID, $topic, $panel, $attachment_id, 7 ) ) {
