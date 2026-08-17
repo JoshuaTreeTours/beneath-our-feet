@@ -180,3 +180,46 @@ function bof_seed_source_material_page() {
     }
 }
 add_action( 'init', 'bof_seed_source_material_page', 21 );
+
+/**
+ * Temporary diagnostic route used by the deployment workflow to recover the
+ * original source filename for the missing Cenozoic panel. Remove after the
+ * mapping is identified.
+ */
+function bof_cenozoic_media_audit_endpoint() {
+    if ( ! isset( $_GET['bof_cenozoic_audit'] ) || '1' !== (string) $_GET['bof_cenozoic_audit'] ) {
+        return;
+    }
+
+    $attachments = get_posts(
+        array(
+            'post_type'      => 'attachment',
+            'post_status'    => 'inherit',
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+            'meta_key'       => '_bof_archive_source_filename',
+            'orderby'        => 'ID',
+            'order'          => 'ASC',
+        )
+    );
+
+    $rows = array();
+    foreach ( $attachments as $attachment_id ) {
+        $filename = (string) get_post_meta( $attachment_id, '_bof_archive_source_filename', true );
+        $url      = wp_get_attachment_image_url( $attachment_id, 'large' );
+        if ( ! $filename || ! $url ) {
+            continue;
+        }
+        $rows[] = array(
+            'id'       => (int) $attachment_id,
+            'filename' => $filename,
+            'url'      => $url,
+        );
+    }
+
+    nocache_headers();
+    header( 'Content-Type: application/json; charset=utf-8' );
+    echo wp_json_encode( $rows );
+    exit;
+}
+add_action( 'template_redirect', 'bof_cenozoic_media_audit_endpoint', 0 );
