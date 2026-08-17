@@ -11,7 +11,7 @@ function bof_home_category_icon_svg( $title ) {
     $icons = array(
         'Places' => '<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="M6 49 23 26l9 12 8-10 18 21H6Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="m18 34 5-8 5 7m8 2 4-7 5 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
         'Deep Time' => '<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="M34 52c-13 0-23-9-23-21S21 10 34 10c11 0 19 7 19 16 0 8-6 14-14 14-7 0-12-4-12-10 0-5 4-9 9-9 4 0 7 3 7 6 0 3-2 5-5 5-2 0-4-1-4-3" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M20 47c6 4 14 6 22 5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
-        'How We Know' => '<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="m16 14 18 18m-7-23 13 13-8 8-13-13 8-8Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="m31 31 17 17m-4-4 7-7m-9 9-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
+        'How We Know' => '<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><circle cx="27" cy="27" r="15" fill="none" stroke="currentColor" stroke-width="3"/><path d="m38 38 14 14" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M20 23h14M20 28h11M22 33h7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>',
     );
 
     return isset( $icons[ $title ] ) ? $icons[ $title ] : '';
