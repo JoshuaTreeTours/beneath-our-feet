@@ -11,6 +11,7 @@ require_once get_stylesheet_directory() . '/inc/national-park-library.php';
 require_once get_stylesheet_directory() . '/inc/all-media-import.php';
 require_once get_stylesheet_directory() . '/inc/national-park-reconcile.php';
 require_once get_stylesheet_directory() . '/inc/topic-library.php';
+require_once get_stylesheet_directory() . '/inc/neo-paleozoic-panel.php';
 require_once get_stylesheet_directory() . '/inc/menu-topic-redirects.php';
 require_once get_stylesheet_directory() . '/inc/site-icon.php';
 
