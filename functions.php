@@ -36,6 +36,19 @@ function bof_setup() {
 }
 add_action( 'after_setup_theme', 'bof_setup' );
 
+/**
+ * Give the homepage a concise search description without changing visible content.
+ */
+function bof_home_meta_description() {
+    if ( ! is_front_page() ) {
+        return;
+    }
+
+    $description = 'Explore Earth’s geology through visual stories of rocks, fossils, tectonics, landscapes and deep time. Discover the evidence beneath our feet.';
+    echo "\n<meta name=\"description\" content=\"" . esc_attr( $description ) . "\">\n";
+}
+add_action( 'wp_head', 'bof_home_meta_description', 5 );
+
 function bof_assets() {
     $theme_css = get_stylesheet_directory() . '/style.css';
     wp_enqueue_style(
@@ -181,7 +194,7 @@ add_action( 'init', 'bof_seed_national_parks_page', 20 );
 
 /**
  * Seed and version the Source Material page from the theme. After this update,
- * it remains a normal Gutenberg page that can be edited manually in WordPress.
+ * it remains a normal Gutenberg page and can be edited manually in WordPress.
  */
 function bof_seed_source_material_page() {
     $content_path = get_stylesheet_directory() . '/content/source-material.html';
