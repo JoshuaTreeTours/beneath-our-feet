@@ -9,7 +9,7 @@ get_header();
  */
 function bof_paleoproterozoic_replacement_url() {
     $theme_file = get_stylesheet_directory() . '/assets/source-092-2-5-to-1-0.webp';
-    if ( ! is_readable( $theme_file ) ) {
+    if ( ! is_readable( $theme_file ) || filesize( $theme_file ) < 10000 ) {
         return '';
     }
 
