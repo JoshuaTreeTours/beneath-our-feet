@@ -40,8 +40,6 @@ $panel_title   = get_post_meta( $page_id, '_bof_topic_panel_title', true );
 $image_url     = $attachment_id ? wp_get_attachment_image_url( $attachment_id, 'full' ) : '';
 $post_slug     = get_post_field( 'post_name', $page_id );
 
-/* Use the same brighter derivative already created for the homepage card on
- * the Burgess Shale panel page itself. No other collection image is changed. */
 if ( 'burgess-shale' === $post_slug && function_exists( 'bof_burgess_shale_bright_url' ) ) {
     $bright_url = bof_burgess_shale_bright_url( $attachment_id );
     if ( $bright_url ) {
@@ -49,8 +47,6 @@ if ( 'burgess-shale' === $post_slug && function_exists( 'bof_burgess_shale_brigh
     }
 }
 
-/* Use the approved replacement artwork on the Paleoproterozoic panel page and
- * on its full-size image link, while also keeping the exact uploads URL live. */
 if ( 'the-paleoproterozoic-era' === $post_slug ) {
     $replacement_url = bof_paleoproterozoic_replacement_url();
     if ( $replacement_url ) {
