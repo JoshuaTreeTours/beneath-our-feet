@@ -114,6 +114,9 @@ function bof_output_structured_data() {
             'isPartOf'   => array( '@id' => $site_id ),
             'inLanguage' => 'en-US',
         );
+        if ( $is_topic || $is_panel ) {
+            $page['breadcrumb'] = array( '@id' => $page_url . '#breadcrumb' );
+        }
         if ( $description ) {
             $page['description'] = wp_strip_all_tags( $description );
         }
