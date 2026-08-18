@@ -39,6 +39,21 @@ function bof_setup() {
 add_action( 'after_setup_theme', 'bof_setup' );
 
 /**
+ * Show the Beneath Our Feet brand in the browser tab on the Pages admin screen.
+ * This changes only the admin document title; it does not rename Pages or alter content.
+ */
+function bof_pages_admin_browser_title( $admin_title, $title ) {
+    global $pagenow;
+
+    if ( 'edit.php' === $pagenow && isset( $_GET['post_type'] ) && 'page' === $_GET['post_type'] ) {
+        return 'Beneath Our Feet';
+    }
+
+    return $admin_title;
+}
+add_filter( 'admin_title', 'bof_pages_admin_browser_title', 10, 2 );
+
+/**
  * Give the homepage a concise search description without changing visible content.
  */
 function bof_home_meta_description() {
