@@ -1,3 +1,3 @@
 # Beneath Our Feet
 
-WordPress theme and site code for beneath-our-feet.com
+Custom WordPress theme and deployment assets for beneath-our-feet.com.
