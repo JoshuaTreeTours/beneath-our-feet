@@ -122,6 +122,106 @@ function bof_home_card_resized_url( $source_file, $name ) {
     return bof_upload_file_url( $target, $uploads );
 }
 
+/**
+ * Create a single smaller homepage-only copy of Panel 123.
+ * This is intentionally isolated from the six cards so it can be reverted
+ * independently in one commit if it does not improve LCP.
+ */
+function bof_home_intro_panel_url() {
+    static $url = null;
+
+    if ( null !== $url ) {
+        return $url;
+    }
+
+    $url = '';
+    $attachments = get_posts(
+        array(
+            'post_type'      => 'attachment',
+            'post_status'    => 'inherit',
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
+            'meta_query'     => array(
+                array(
+                    'key'     => '_wp_attached_file',
+                    'value'   => 'source-123.webp',
+                    'compare' => 'LIKE',
+                ),
+            ),
+        )
+    );
+
+    if ( empty( $attachments ) ) {
+        return $url;
+    }
+
+    $source_file = get_attached_file( (int) $attachments[0] );
+    if ( ! $source_file || ! is_readable( $source_file ) ) {
+        return $url;
+    }
+
+    $uploads = wp_upload_dir();
+    if ( ! empty( $uploads['error'] ) ) {
+        return $url;
+    }
+
+    $target = trailingslashit( dirname( $source_file ) ) . 'source-123-home-600.webp';
+    $needs_build = ! is_readable( $target ) || filemtime( $target ) < filemtime( $source_file );
+
+    if ( $needs_build ) {
+        $editor = wp_get_image_editor( $source_file );
+        if ( is_wp_error( $editor ) ) {
+            return $url;
+        }
+
+        $result = $editor->resize( 600, null, false );
+        if ( is_wp_error( $result ) ) {
+            return $url;
+        }
+
+        $editor->set_quality( 74 );
+        $saved = $editor->save( $target, 'image/webp' );
+        if ( is_wp_error( $saved ) || ! is_readable( $target ) ) {
+            return $url;
+        }
+    }
+
+    $url = bof_upload_file_url( $target, $uploads );
+    return $url;
+}
+
+/** Serve the 600px Panel 123 derivative only on the homepage introduction. */
+function bof_optimize_home_intro_panel( $block_content, $block ) {
+    if ( ! is_front_page() || empty( $block['blockName'] ) || 'core/image' !== $block['blockName'] ) {
+        return $block_content;
+    }
+
+    if ( false === strpos( $block_content, 'source-123' ) && false === strpos( $block_content, 'wp-image-214' ) ) {
+        return $block_content;
+    }
+
+    $image_url = bof_home_intro_panel_url();
+    if ( ! $image_url || ! class_exists( 'WP_HTML_Tag_Processor' ) ) {
+        return $block_content;
+    }
+
+    $processor = new WP_HTML_Tag_Processor( $block_content );
+    if ( ! $processor->next_tag( 'img' ) ) {
+        return $block_content;
+    }
+
+    $processor->set_attribute( 'src', $image_url );
+    $processor->set_attribute( 'width', '600' );
+    $processor->set_attribute( 'height', '900' );
+    $processor->set_attribute( 'loading', 'lazy' );
+    $processor->set_attribute( 'decoding', 'async' );
+    $processor->remove_attribute( 'srcset' );
+    $processor->remove_attribute( 'sizes' );
+
+    return $processor->get_updated_html();
+}
+add_filter( 'render_block', 'bof_optimize_home_intro_panel', 35, 2 );
+
 function bof_home_card_image_url( $filename ) {
     static $cache = array();
 
