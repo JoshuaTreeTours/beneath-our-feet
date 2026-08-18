@@ -74,3 +74,18 @@ function bof_install_site_icon() {
     update_option( 'bof_site_icon_version', $version );
 }
 add_action( 'init', 'bof_install_site_icon', 45 );
+
+/**
+ * Keep the Pages admin browser tab clean and branded.
+ * This changes only the browser tab title on the Pages list screen.
+ */
+function bof_force_pages_admin_tab_title() {
+    $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+    if ( ! $screen || 'edit' !== $screen->base || 'page' !== $screen->post_type ) {
+        return;
+    }
+
+    echo "<script>document.title='Beneath Our Feet';</script>\n";
+}
+add_action( 'admin_head-edit.php', 'bof_force_pages_admin_tab_title', 999 );
