@@ -3,13 +3,13 @@
 get_header();
 
 /**
- * Build a corrected derivative of the Paleoproterozoic panel so the prominent
- * date line reads "2.5 – 1.0 BILLION YEARS AGO" inside the artwork itself.
- * The original Media Library attachment is left untouched.
+ * Ensure the approved Paleoproterozoic replacement panel is copied from the
+ * deployed theme into the WordPress uploads directory at the exact public URL
+ * requested by the site owner.
  */
-function bof_paleoproterozoic_corrected_url( $attachment_id ) {
-    $source_file = get_attached_file( (int) $attachment_id );
-    if ( ! $source_file || ! is_readable( $source_file ) ) {
+function bof_paleoproterozoic_replacement_url() {
+    $theme_file = get_stylesheet_directory() . '/assets/source-092-2-5-to-1-0.webp';
+    if ( ! is_readable( $theme_file ) ) {
         return '';
     }
 
@@ -18,103 +18,19 @@ function bof_paleoproterozoic_corrected_url( $attachment_id ) {
         return '';
     }
 
-    $corrected_file = trailingslashit( dirname( $source_file ) ) . 'source-092-2-5-to-1-0.webp';
-    $needs_build    = ! is_readable( $corrected_file ) || filemtime( $corrected_file ) < filemtime( $source_file );
+    $target_dir  = trailingslashit( $uploads['basedir'] ) . '2026/08';
+    $target_file = trailingslashit( $target_dir ) . 'source-092-2-5-to-1-0.webp';
 
-    if ( $needs_build ) {
-        $written = false;
-
-        if ( class_exists( 'Imagick' ) ) {
-            try {
-                $image  = new Imagick( $source_file );
-                $width  = $image->getImageWidth();
-                $height = $image->getImageHeight();
-
-                $patch = new ImagickDraw();
-                $patch->setFillColor( new ImagickPixel( '#f8ecd8' ) );
-                $patch->setStrokeColor( new ImagickPixel( '#f8ecd8' ) );
-                $patch->rectangle(
-                    (int) round( $width * 0.015 ),
-                    (int) round( $height * 0.135 ),
-                    (int) round( $width * 0.310 ),
-                    (int) round( $height * 0.162 )
-                );
-                $image->drawImage( $patch );
-
-                $text = new ImagickDraw();
-                $text->setFillColor( new ImagickPixel( '#bd5823' ) );
-                $fonts = Imagick::queryFonts( 'DejaVu*Condensed*Bold*' );
-                if ( ! empty( $fonts ) ) {
-                    $text->setFont( $fonts[0] );
-                }
-                $text->setFontSize( max( 16, $width * 0.0225 ) );
-                $text->setFontWeight( 700 );
-                $image->annotateImage(
-                    $text,
-                    (int) round( $width * 0.022 ),
-                    (int) round( $height * 0.158 ),
-                    0,
-                    '2.5 – 1.0 BILLION YEARS AGO'
-                );
-
-                $image->setImageFormat( 'webp' );
-                $image->setImageCompressionQuality( 92 );
-                $written = $image->writeImage( $corrected_file );
-                $image->clear();
-                $image->destroy();
-            } catch ( Exception $e ) {
-                $written = false;
-            }
-        }
-
-        if ( ! $written && function_exists( 'imagecreatefromwebp' ) && function_exists( 'imagettftext' ) && function_exists( 'imagewebp' ) ) {
-            $image = @imagecreatefromwebp( $source_file );
-            if ( $image ) {
-                $width  = imagesx( $image );
-                $height = imagesy( $image );
-                $bg     = imagecolorallocate( $image, 248, 236, 216 );
-                $orange = imagecolorallocate( $image, 189, 88, 35 );
-
-                imagefilledrectangle(
-                    $image,
-                    (int) round( $width * 0.015 ),
-                    (int) round( $height * 0.135 ),
-                    (int) round( $width * 0.310 ),
-                    (int) round( $height * 0.162 ),
-                    $bg
-                );
-
-                $font = '/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed-Bold.ttf';
-                if ( is_readable( $font ) ) {
-                    imagettftext(
-                        $image,
-                        max( 16, $width * 0.0225 ),
-                        0,
-                        (int) round( $width * 0.022 ),
-                        (int) round( $height * 0.158 ),
-                        $orange,
-                        $font,
-                        '2.5 – 1.0 BILLION YEARS AGO'
-                    );
-                    $written = @imagewebp( $image, $corrected_file, 92 );
-                }
-                imagedestroy( $image );
-            }
-        }
-
-        if ( ! $written ) {
-            return '';
-        }
-    }
-
-    $basedir = wp_normalize_path( $uploads['basedir'] );
-    $path    = wp_normalize_path( $corrected_file );
-    if ( 0 !== strpos( $path, $basedir ) ) {
+    if ( ! wp_mkdir_p( $target_dir ) ) {
         return '';
     }
 
-    $relative = ltrim( substr( $path, strlen( $basedir ) ), '/' );
-    return trailingslashit( $uploads['baseurl'] ) . str_replace( '%2F', '/', rawurlencode( $relative ) );
+    $needs_copy = ! is_readable( $target_file ) || filesize( $target_file ) !== filesize( $theme_file ) || filemtime( $target_file ) < filemtime( $theme_file );
+    if ( $needs_copy && ! @copy( $theme_file, $target_file ) ) {
+        return '';
+    }
+
+    return trailingslashit( $uploads['baseurl'] ) . '2026/08/source-092-2-5-to-1-0.webp';
 }
 
 $page_id       = get_queried_object_id();
@@ -122,8 +38,7 @@ $attachment_id = (int) get_post_meta( $page_id, '_bof_topic_attachment_id', true
 $topic_title   = get_post_meta( $page_id, '_bof_topic_title', true );
 $panel_title   = get_post_meta( $page_id, '_bof_topic_panel_title', true );
 $image_url     = $attachment_id ? wp_get_attachment_image_url( $attachment_id, 'full' ) : '';
-
-$post_slug = get_post_field( 'post_name', $page_id );
+$post_slug     = get_post_field( 'post_name', $page_id );
 
 /* Use the same brighter derivative already created for the homepage card on
  * the Burgess Shale panel page itself. No other collection image is changed. */
@@ -134,12 +49,12 @@ if ( 'burgess-shale' === $post_slug && function_exists( 'bof_burgess_shale_brigh
     }
 }
 
-/* Serve the corrected date artwork on the Paleoproterozoic panel page and on
- * its full-size image link. */
+/* Use the approved replacement artwork on the Paleoproterozoic panel page and
+ * on its full-size image link, while also keeping the exact uploads URL live. */
 if ( 'the-paleoproterozoic-era' === $post_slug ) {
-    $corrected_url = bof_paleoproterozoic_corrected_url( $attachment_id );
-    if ( $corrected_url ) {
-        $image_url = $corrected_url;
+    $replacement_url = bof_paleoproterozoic_replacement_url();
+    if ( $replacement_url ) {
+        $image_url = $replacement_url;
     }
 }
 
