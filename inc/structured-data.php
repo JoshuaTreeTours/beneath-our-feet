@@ -74,12 +74,13 @@ function bof_output_structured_data() {
     $graph = array( $organization );
 
     $graph[] = array(
-        '@type'      => 'WebSite',
-        '@id'        => $site_id,
-        'url'        => $site_url,
-        'name'       => 'Beneath Our Feet',
-        'publisher'  => array( '@id' => $org_id ),
-        'inLanguage' => 'en-US',
+        '@type'         => 'WebSite',
+        '@id'           => $site_id,
+        'url'           => $site_url,
+        'name'          => 'Beneath Our Feet',
+        'alternateName' => array( 'BeneathOurFeet.Earth', 'beneath-our-feet.com' ),
+        'publisher'     => array( '@id' => $org_id ),
+        'inLanguage'    => 'en-US',
     );
 
     if ( is_front_page() ) {
