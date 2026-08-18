@@ -76,6 +76,22 @@ function bof_install_site_icon() {
 add_action( 'init', 'bof_install_site_icon', 45 );
 
 /**
+ * Set the WordPress Site Title to the public-facing brand once.
+ * This changes the displayed site name only; it does not change the domain or URLs.
+ */
+function bof_set_site_title_branding() {
+    $version = 1;
+
+    if ( (int) get_option( 'bof_site_title_version', 0 ) >= $version ) {
+        return;
+    }
+
+    update_option( 'blogname', 'Beneath Our Feet' );
+    update_option( 'bof_site_title_version', $version );
+}
+add_action( 'init', 'bof_set_site_title_branding', 5 );
+
+/**
  * Keep the Pages admin browser tab clean and branded.
  * This changes only the browser tab title on the Pages list screen.
  */
