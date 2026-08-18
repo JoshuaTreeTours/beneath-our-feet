@@ -10,8 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Create a brighter homepage-only derivative of the original Burgess Shale
- * panel. This preserves every pixel of text/content in the source artwork and
- * changes only its brightness; no other site imagery is touched.
+ * panel. This preserves the source artwork and is used only by the home card.
  */
 function bof_burgess_shale_bright_url( $attachment_id ) {
     $source_file = get_attached_file( (int) $attachment_id );
@@ -48,7 +47,6 @@ function bof_burgess_shale_bright_url( $attachment_id ) {
         if ( ! $written && function_exists( 'imagecreatefromwebp' ) && function_exists( 'imagewebp' ) ) {
             $image = @imagecreatefromwebp( $source_file );
             if ( $image ) {
-                // Lift the dark midtones without changing the artwork itself.
                 @imagefilter( $image, IMG_FILTER_BRIGHTNESS, 28 );
                 @imagefilter( $image, IMG_FILTER_CONTRAST, -4 );
                 $written = @imagewebp( $image, $bright_file, 90 );
@@ -61,14 +59,67 @@ function bof_burgess_shale_bright_url( $attachment_id ) {
         }
     }
 
+    return bof_upload_file_url( $bright_file, $uploads );
+}
+
+/** Convert an uploads filepath to its public uploads URL. */
+function bof_upload_file_url( $file, $uploads = null ) {
+    if ( null === $uploads ) {
+        $uploads = wp_upload_dir();
+    }
+    if ( ! empty( $uploads['error'] ) || empty( $uploads['basedir'] ) || empty( $uploads['baseurl'] ) ) {
+        return '';
+    }
+
     $basedir = wp_normalize_path( $uploads['basedir'] );
-    $path    = wp_normalize_path( $bright_file );
+    $path    = wp_normalize_path( $file );
     if ( 0 !== strpos( $path, $basedir ) ) {
         return '';
     }
 
     $relative = ltrim( substr( $path, strlen( $basedir ) ), '/' );
     return trailingslashit( $uploads['baseurl'] ) . str_replace( '%2F', '/', rawurlencode( $relative ) );
+}
+
+/**
+ * Make a small homepage-only WebP copy of a source file.
+ * No Media Library originals or collection-page images are modified.
+ */
+function bof_home_card_resized_url( $source_file, $name ) {
+    if ( ! $source_file || ! is_readable( $source_file ) ) {
+        return '';
+    }
+
+    $uploads = wp_upload_dir();
+    if ( ! empty( $uploads['error'] ) ) {
+        return '';
+    }
+
+    $target = trailingslashit( dirname( $source_file ) ) . sanitize_file_name( $name ) . '-card-640.webp';
+    $needs_build = ! is_readable( $target ) || filemtime( $target ) < filemtime( $source_file );
+
+    if ( $needs_build ) {
+        $editor = wp_get_image_editor( $source_file );
+        if ( is_wp_error( $editor ) ) {
+            return '';
+        }
+
+        $size = $editor->get_size();
+        if ( ! empty( $size['width'] ) && (int) $size['width'] > 640 ) {
+            $result = $editor->resize( 640, null, false );
+            if ( is_wp_error( $result ) ) {
+                return '';
+            }
+        }
+
+        $editor->set_quality( 76 );
+        $saved = $editor->save( $target, 'image/webp' );
+        if ( is_wp_error( $saved ) || ! is_readable( $target ) ) {
+            return '';
+        }
+    }
+
+    return bof_upload_file_url( $target, $uploads );
 }
 
 function bof_home_card_image_url( $filename ) {
@@ -95,15 +146,28 @@ function bof_home_card_image_url( $filename ) {
     );
 
     if ( ! empty( $attachments ) ) {
+        $attachment_id = (int) $attachments[0];
+        $source_file   = get_attached_file( $attachment_id );
+
         if ( 'source-034.webp' === $filename ) {
-            $bright_url = bof_burgess_shale_bright_url( (int) $attachments[0] );
-            if ( $bright_url ) {
-                $cache[ $filename ] = $bright_url;
-                return $bright_url;
+            $bright_url  = bof_burgess_shale_bright_url( $attachment_id );
+            $bright_file = trailingslashit( dirname( $source_file ) ) . 'source-034-home-bright.webp';
+            if ( $bright_url && is_readable( $bright_file ) ) {
+                $url = bof_home_card_resized_url( $bright_file, 'source-034-home-bright' );
+                if ( $url ) {
+                    $cache[ $filename ] = $url;
+                    return $url;
+                }
+            }
+        } elseif ( $source_file ) {
+            $url = bof_home_card_resized_url( $source_file, pathinfo( $filename, PATHINFO_FILENAME ) );
+            if ( $url ) {
+                $cache[ $filename ] = $url;
+                return $url;
             }
         }
 
-        $url = wp_get_attachment_image_url( (int) $attachments[0], 'large' );
+        $url = wp_get_attachment_image_url( $attachment_id, 'large' );
         if ( $url ) {
             $cache[ $filename ] = $url;
             return $url;
