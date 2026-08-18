@@ -3,6 +3,7 @@
 get_header();
 
 $page_id       = get_queried_object_id();
+$page_slug     = get_post_field( 'post_name', $page_id );
 $attachment_id = (int) get_post_meta( $page_id, '_bof_topic_attachment_id', true );
 $topic_title   = get_post_meta( $page_id, '_bof_topic_title', true );
 $panel_title   = get_post_meta( $page_id, '_bof_topic_panel_title', true );
@@ -10,7 +11,7 @@ $image_url     = $attachment_id ? wp_get_attachment_image_url( $attachment_id, '
 
 /* Use the same brighter derivative already created for the homepage card on
  * the Burgess Shale panel page itself. No other collection image is changed. */
-if ( 'burgess-shale' === get_post_field( 'post_name', $page_id ) && function_exists( 'bof_burgess_shale_bright_url' ) ) {
+if ( 'burgess-shale' === $page_slug && function_exists( 'bof_burgess_shale_bright_url' ) ) {
     $bright_url = bof_burgess_shale_bright_url( $attachment_id );
     if ( $bright_url ) {
         $image_url = $bright_url;
@@ -26,6 +27,9 @@ $parent_id = wp_get_post_parent_id( $page_id );
         <div class="bof-panel-heading">
             <span><?php echo esc_html( $topic_title ); ?></span>
             <h1 id="bof-panel-title"><?php echo esc_html( $panel_title ); ?></h1>
+            <?php if ( 'the-paleoproterozoic-era' === $page_slug ) : ?>
+                <span class="bof-panel-age-range">2.5 to 1 billion years ago</span>
+            <?php endif; ?>
         </div>
         <a class="bof-panel-all" href="<?php echo esc_url( home_url( '/national-parks/' ) ); ?>">National Parks</a>
     </div>
