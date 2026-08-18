@@ -8,6 +8,69 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/**
+ * Create a brighter homepage-only derivative of the original Burgess Shale
+ * panel. This preserves every pixel of text/content in the source artwork and
+ * changes only its brightness; no other site imagery is touched.
+ */
+function bof_burgess_shale_bright_url( $attachment_id ) {
+    $source_file = get_attached_file( (int) $attachment_id );
+    if ( ! $source_file || ! is_readable( $source_file ) ) {
+        return '';
+    }
+
+    $uploads = wp_upload_dir();
+    if ( ! empty( $uploads['error'] ) || empty( $uploads['basedir'] ) || empty( $uploads['baseurl'] ) ) {
+        return '';
+    }
+
+    $bright_file = trailingslashit( dirname( $source_file ) ) . 'source-034-home-bright.webp';
+    $needs_build = ! is_readable( $bright_file ) || filemtime( $bright_file ) < filemtime( $source_file );
+
+    if ( $needs_build ) {
+        $written = false;
+
+        if ( class_exists( 'Imagick' ) ) {
+            try {
+                $image = new Imagick( $source_file );
+                $image->setImageColorspace( Imagick::COLORSPACE_SRGB );
+                $image->modulateImage( 122, 100, 100 );
+                $image->setImageFormat( 'webp' );
+                $image->setImageCompressionQuality( 90 );
+                $written = $image->writeImage( $bright_file );
+                $image->clear();
+                $image->destroy();
+            } catch ( Exception $e ) {
+                $written = false;
+            }
+        }
+
+        if ( ! $written && function_exists( 'imagecreatefromwebp' ) && function_exists( 'imagewebp' ) ) {
+            $image = @imagecreatefromwebp( $source_file );
+            if ( $image ) {
+                // Lift the dark midtones without changing the artwork itself.
+                @imagefilter( $image, IMG_FILTER_BRIGHTNESS, 28 );
+                @imagefilter( $image, IMG_FILTER_CONTRAST, -4 );
+                $written = @imagewebp( $image, $bright_file, 90 );
+                imagedestroy( $image );
+            }
+        }
+
+        if ( ! $written ) {
+            return '';
+        }
+    }
+
+    $basedir = wp_normalize_path( $uploads['basedir'] );
+    $path    = wp_normalize_path( $bright_file );
+    if ( 0 !== strpos( $path, $basedir ) ) {
+        return '';
+    }
+
+    $relative = ltrim( substr( $path, strlen( $basedir ) ), '/' );
+    return trailingslashit( $uploads['baseurl'] ) . str_replace( '%2F', '/', rawurlencode( $relative ) );
+}
+
 function bof_home_card_image_url( $filename ) {
     static $cache = array();
 
@@ -32,6 +95,14 @@ function bof_home_card_image_url( $filename ) {
     );
 
     if ( ! empty( $attachments ) ) {
+        if ( 'source-034.webp' === $filename ) {
+            $bright_url = bof_burgess_shale_bright_url( (int) $attachments[0] );
+            if ( $bright_url ) {
+                $cache[ $filename ] = $bright_url;
+                return $bright_url;
+            }
+        }
+
         $url = wp_get_attachment_image_url( (int) $attachments[0], 'large' );
         if ( $url ) {
             $cache[ $filename ] = $url;
