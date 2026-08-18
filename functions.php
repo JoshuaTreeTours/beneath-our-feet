@@ -82,8 +82,9 @@ add_action( 'wp_enqueue_scripts', 'bof_assets' );
 
 /**
  * Keep the Gutenberg mobile hero block intact, but always render it with the
- * approved WordPress Media Library image (attachment ID 18). This avoids the
- * blocked theme-level PHP image endpoint that Cloudways returns as 403.
+ * approved WordPress Media Library image (attachment ID 18). Serve WordPress's
+ * 768px medium-large derivative on the front end instead of the 1023px master
+ * so mobile LCP is lighter while the original Media Library file remains intact.
  */
 function bof_render_mobile_hero_from_media( $block_content, $block ) {
     if ( ! is_front_page() || empty( $block['blockName'] ) || 'core/cover' !== $block['blockName'] ) {
@@ -95,20 +96,27 @@ function bof_render_mobile_hero_from_media( $block_content, $block ) {
         return $block_content;
     }
 
-    $mobile_hero_url = wp_get_attachment_image_url( 18, 'full' );
+    $mobile_hero_url = wp_get_attachment_image_url( 18, 'medium_large' );
+    if ( ! $mobile_hero_url ) {
+        $mobile_hero_url = wp_get_attachment_image_url( 18, 'full' );
+    }
     if ( ! $mobile_hero_url ) {
         return $block_content;
     }
 
     $escaped_url = esc_url( $mobile_hero_url );
 
-    // Replace the rendered Cover image src without changing the Gutenberg block itself.
+    // Replace the rendered Cover image source without changing Gutenberg data.
     $block_content = preg_replace(
         '/(<img\b[^>]*\bsrc=["\'])[^"\']*(["\'][^>]*>)/i',
         '$1' . $escaped_url . '$2',
         $block_content,
         1
     );
+
+    // Prevent an existing srcset from causing the browser to choose the full-size master.
+    $block_content = preg_replace( '/\s+srcset=("[^"]*"|\'[^\']*\')/i', '', $block_content, 1 );
+    $block_content = preg_replace( '/\s+sizes=("[^"]*"|\'[^\']*\')/i', '', $block_content, 1 );
 
     return $block_content;
 }
