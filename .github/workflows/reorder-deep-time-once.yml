@@ -1,4 +1,4 @@
-name: Reorder Deep Time Once
+name: Remove Deep Time Last Panel Once
 
 on:
   push:
@@ -10,13 +10,13 @@ permissions:
   contents: write
 
 jobs:
-  reorder:
+  remove-last:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Move Story of Earth's Deep Time to slot 1
+      - name: Remove Earth's Calendar from Deep Time only
         run: |
           python - <<'PY'
           import json
@@ -28,11 +28,12 @@ jobs:
           for topic in data.get('topics', []):
               if topic.get('slug') == 'deep-time':
                   panels = topic.get('panels', [])
-                  target_index = next((i for i, panel in enumerate(panels) if panel.get('filename') == 'source-123.webp'), None)
-                  if target_index is None:
-                      raise SystemExit('source-123.webp not found in Deep Time collection')
-                  target = panels.pop(target_index)
-                  panels.insert(0, target)
+                  if not panels:
+                      raise SystemExit('Deep Time collection has no panels')
+                  last = panels[-1]
+                  if last.get('filename') != 'source-025.webp':
+                      raise SystemExit(f"Unexpected last Deep Time panel: {last}")
+                  panels.pop()
                   break
           else:
               raise SystemExit('Deep Time collection not found')
@@ -42,9 +43,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add content/topic-collections.json
-          if git diff --cached --quiet; then
-            echo "Deep Time order already correct."
-          else
-            git commit -m "Move Story of Earth's Deep Time to slot 1"
-            git push origin main
-          fi
+          git commit -m "Remove Earth's Calendar from Deep Time"
+          git push origin main
