@@ -54,6 +54,11 @@ if ( 'the-paleoproterozoic-era' === $post_slug ) {
     }
 }
 
+// Deep Time → Earth's Clock: use the owner's corrected replacement artwork.
+if ( 409 === (int) $page_id && 'earths-clock' === $post_slug ) {
+    $image_url = 'https://beneath-our-feet.com/wp-content/uploads/2026/08/source-133-1.webp-1.webp';
+}
+
 list( $prev_id, $next_id ) = bof_topic_panel_neighbors( $page_id );
 $parent_id = wp_get_post_parent_id( $page_id );
 ?>
