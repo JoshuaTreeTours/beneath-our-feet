@@ -105,3 +105,6 @@ function bof_force_pages_admin_tab_title() {
     echo "<script>document.title='Beneath Our Feet';</script>\n";
 }
 add_action( 'admin_head-edit.php', 'bof_force_pages_admin_tab_title', 999 );
+
+// Temporary one-time updater for attachment 220 (Earth's Clock).
+require_once get_stylesheet_directory() . '/inc/earth-clock-refresh.php';
