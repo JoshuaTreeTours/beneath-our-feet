@@ -1,0 +1,39 @@
+name: Diagnose Earth Clock Panel
+
+on:
+  push:
+    paths:
+      - '.github/workflows/diagnose-earth-clock.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Locate Earth Clock page and media
+        run: |
+          set -euo pipefail
+          base='https://beneath-our-feet.com/wp-json/wp/v2'
+          echo '=== PAGE SEARCH: Earth Clock ==='
+          curl --fail --silent --show-error --location --get "$base/pages" \
+            --data-urlencode 'search=Earth Clock' \
+            --data-urlencode 'per_page=100' \
+            --data-urlencode '_fields=id,slug,link,title,featured_media,content' | python3 -m json.tool
+          echo '=== PAGE SEARCH: Earths Clock ==='
+          curl --fail --silent --show-error --location --get "$base/pages" \
+            --data-urlencode 'search=Earths Clock' \
+            --data-urlencode 'per_page=100' \
+            --data-urlencode '_fields=id,slug,link,title,featured_media,content' | python3 -m json.tool
+          echo '=== MEDIA SEARCH: Earth Clock ==='
+          curl --fail --silent --show-error --location --get "$base/media" \
+            --data-urlencode 'search=Earth Clock' \
+            --data-urlencode 'per_page=100' \
+            --data-urlencode '_fields=id,slug,source_url,title,caption,description,alt_text,media_details' | python3 -m json.tool
+          echo '=== MEDIA SEARCH: Clock ==='
+          curl --fail --silent --show-error --location --get "$base/media" \
+            --data-urlencode 'search=Clock' \
+            --data-urlencode 'per_page=100' \
+            --data-urlencode '_fields=id,slug,source_url,title,caption,description,alt_text,media_details' | python3 -m json.tool
