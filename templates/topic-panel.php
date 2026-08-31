@@ -64,6 +64,11 @@ if ( 410 === (int) $page_id && 'geologic-time-scale' === $post_slug ) {
     $image_url = 'https://beneath-our-feet.com/wp-content/uploads/2026/08/source-053-1.webp';
 }
 
+// Deep Time → Earth's Calendar: use the newly uploaded corrected panel.
+if ( 'earths-calendar' === $post_slug ) {
+    $image_url = 'https://beneath-our-feet.com/wp-content/uploads/2026/08/file_00000000b15081fd8e2d1de6b89a8baa.png';
+}
+
 list( $prev_id, $next_id ) = bof_topic_panel_neighbors( $page_id );
 $parent_id = wp_get_post_parent_id( $page_id );
 ?>
