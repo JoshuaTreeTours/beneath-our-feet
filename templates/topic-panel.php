@@ -33,6 +33,55 @@ function bof_paleoproterozoic_replacement_url() {
     return trailingslashit( $uploads['baseurl'] ) . '2026/08/source-092-2-5-to-1-0.webp';
 }
 
+/**
+ * Materialize the corrected Geologic Time Scale panel from the base64 parts
+ * shipped with the theme. This guarantees that the public uploads file exists
+ * even if the earlier media-library upload was removed or failed to persist.
+ */
+function bof_geologic_time_scale_corrected_url() {
+    $parts = glob( get_stylesheet_directory() . '/assets/source-053.part*.b64' );
+    if ( ! is_array( $parts ) || empty( $parts ) ) {
+        return '';
+    }
+    sort( $parts, SORT_NATURAL );
+
+    $encoded = '';
+    foreach ( $parts as $part ) {
+        if ( ! is_readable( $part ) ) {
+            return '';
+        }
+        $chunk = file_get_contents( $part );
+        if ( false === $chunk ) {
+            return '';
+        }
+        $encoded .= trim( $chunk );
+    }
+
+    $binary = base64_decode( $encoded, true );
+    if ( false === $binary || strlen( $binary ) < 10000 || 0 !== strpos( $binary, 'RIFF' ) || 'WEBP' !== substr( $binary, 8, 4 ) ) {
+        return '';
+    }
+
+    $uploads = wp_upload_dir();
+    if ( ! empty( $uploads['error'] ) || empty( $uploads['basedir'] ) || empty( $uploads['baseurl'] ) ) {
+        return '';
+    }
+
+    $target_dir  = trailingslashit( $uploads['basedir'] ) . '2026/08';
+    $target_file = trailingslashit( $target_dir ) . 'geologic-time-scale-corrected.webp';
+
+    if ( ! wp_mkdir_p( $target_dir ) ) {
+        return '';
+    }
+
+    $needs_write = ! is_readable( $target_file ) || filesize( $target_file ) !== strlen( $binary );
+    if ( $needs_write && strlen( $binary ) !== @file_put_contents( $target_file, $binary, LOCK_EX ) ) {
+        return '';
+    }
+
+    return trailingslashit( $uploads['baseurl'] ) . '2026/08/geologic-time-scale-corrected.webp';
+}
+
 $page_id       = get_queried_object_id();
 $attachment_id = (int) get_post_meta( $page_id, '_bof_topic_attachment_id', true );
 $topic_title   = get_post_meta( $page_id, '_bof_topic_title', true );
@@ -59,9 +108,12 @@ if ( 409 === (int) $page_id && 'earths-clock' === $post_slug ) {
     $image_url = 'https://beneath-our-feet.com/wp-content/uploads/2026/08/source-133-1.webp-1.webp';
 }
 
-// Deep Time → Geologic Time Scale: use the newly corrected high-resolution panel.
+// Deep Time → Geologic Time Scale: materialize and use the corrected panel.
 if ( 410 === (int) $page_id && 'geologic-time-scale' === $post_slug ) {
-    $image_url = 'https://beneath-our-feet.com/wp-content/uploads/2026/08/geologic-time-scale-corrected.webp';
+    $replacement_url = bof_geologic_time_scale_corrected_url();
+    if ( $replacement_url ) {
+        $image_url = $replacement_url;
+    }
 }
 
 list( $prev_id, $next_id ) = bof_topic_panel_neighbors( $page_id );
