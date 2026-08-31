@@ -1,0 +1,76 @@
+name: Replace source-053 media
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'assets/source-053.part*.b64'
+      - '.github/workflows/replace-source-053.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replace-media:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rebuild corrected source-053.webp
+        run: |
+          cat assets/source-053.part*.b64 > /tmp/source-053.b64
+          base64 --decode /tmp/source-053.b64 > /tmp/source-053.webp
+          test "$(stat -c%s /tmp/source-053.webp)" = "393462"
+          echo "c36ac6896c3f1a861a30bd024b9394498e9f1ce1f8ef3fc7313e043b07bb481d  /tmp/source-053.webp" | sha256sum -c -
+
+      - name: Replace WordPress media file at same URL
+        env:
+          WP_BASE_URL: ${{ secrets.WP_BASE_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import base64, json, os, urllib.parse, urllib.request
+          base = os.environ['WP_BASE_URL'].rstrip('/')
+          token = base64.b64encode(f"{os.environ['WP_USERNAME']}:{os.environ['WP_APP_PASSWORD']}".encode()).decode()
+          headers = {'Authorization': f'Basic {token}', 'User-Agent': 'BeneathOurFeet-GitHub-Publisher/1.0', 'Accept': 'application/json'}
+
+          q = urllib.parse.urlencode({'search':'source-053','per_page':100,'context':'edit'})
+          req = urllib.request.Request(f'{base}/wp-json/wp/v2/media?{q}', headers=headers)
+          with urllib.request.urlopen(req, timeout=30) as r:
+              media = json.load(r)
+
+          target = None
+          for item in media:
+              src = (item.get('source_url') or '').split('?')[0]
+              if src.endswith('/2026/08/source-053.webp') or src.endswith('/source-053.webp'):
+                  target = item
+                  break
+
+          if target:
+              del_req = urllib.request.Request(f"{base}/wp-json/wp/v2/media/{target['id']}?force=true", headers=headers, method='DELETE')
+              with urllib.request.urlopen(del_req, timeout=30) as r:
+                  deleted = json.load(r)
+              print('Deleted old attachment', target['id'])
+          else:
+              print('Exact old attachment not found by REST search; upload will still be attempted.')
+
+          data = open('/tmp/source-053.webp','rb').read()
+          up_headers = dict(headers)
+          up_headers['Content-Type'] = 'image/webp'
+          up_headers['Content-Disposition'] = 'attachment; filename="source-053.webp"'
+          up_req = urllib.request.Request(f'{base}/wp-json/wp/v2/media', data=data, headers=up_headers, method='POST')
+          with urllib.request.urlopen(up_req, timeout=60) as r:
+              result = json.load(r)
+          print('Uploaded attachment', result['id'], result.get('source_url'))
+          src = (result.get('source_url') or '').split('?')[0]
+          if not src.endswith('/2026/08/source-053.webp'):
+              raise SystemExit(f'Unexpected media URL: {src}')
+          PY
+
+      - name: Verify public image URL
+        run: |
+          curl -fsSL --retry 3 --retry-delay 3 'https://beneath-our-feet.com/wp-content/uploads/2026/08/source-053.webp?verify=${{ github.sha }}' -o /tmp/live.webp
+          echo "c36ac6896c3f1a861a30bd024b9394498e9f1ce1f8ef3fc7313e043b07bb481d  /tmp/live.webp" | sha256sum -c -
