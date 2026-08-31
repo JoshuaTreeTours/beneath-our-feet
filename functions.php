@@ -264,3 +264,18 @@ function bof_seed_source_material_page() {
     }
 }
 add_action( 'init', 'bof_seed_source_material_page', 21 );
+
+/** Remove the retired Deep Time Earth's Calendar page once on production. */
+function bof_remove_retired_earths_calendar_page() {
+    if ( get_option( 'bof_removed_deep_time_earths_calendar', false ) ) {
+        return;
+    }
+
+    $page = get_page_by_path( 'collections/deep-time/earths-calendar', OBJECT, 'page' );
+    if ( $page ) {
+        wp_trash_post( $page->ID );
+    }
+
+    update_option( 'bof_removed_deep_time_earths_calendar', 1 );
+}
+add_action( 'init', 'bof_remove_retired_earths_calendar_page', 99 );
