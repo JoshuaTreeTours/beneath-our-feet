@@ -40,6 +40,13 @@ $panel_title   = get_post_meta( $page_id, '_bof_topic_panel_title', true );
 $image_url     = $attachment_id ? wp_get_attachment_image_url( $attachment_id, 'full' ) : '';
 $post_slug     = get_post_field( 'post_name', $page_id );
 
+// Permanently remove the retired Deep Time → Earth's Calendar page.
+if ( 'collections/deep-time/earths-calendar' === get_page_uri( $page_id ) ) {
+    wp_trash_post( $page_id );
+    wp_safe_redirect( home_url( '/collections/deep-time/' ), 302 );
+    exit;
+}
+
 if ( 'burgess-shale' === $post_slug && function_exists( 'bof_burgess_shale_bright_url' ) ) {
     $bright_url = bof_burgess_shale_bright_url( $attachment_id );
     if ( $bright_url ) {
@@ -62,11 +69,6 @@ if ( 409 === (int) $page_id && 'earths-clock' === $post_slug ) {
 // Deep Time → Geologic Time Scale: use the owner's newly uploaded corrected panel.
 if ( 410 === (int) $page_id && 'geologic-time-scale' === $post_slug ) {
     $image_url = 'https://beneath-our-feet.com/wp-content/uploads/2026/08/source-053-1.webp';
-}
-
-// Deep Time → Earth's Calendar: use the newly uploaded corrected panel.
-if ( 'earths-calendar' === $post_slug ) {
-    $image_url = 'https://beneath-our-feet.com/wp-content/uploads/2026/08/file_00000000b15081fd8e2d1de6b89a8baa.png';
 }
 
 list( $prev_id, $next_id ) = bof_topic_panel_neighbors( $page_id );
