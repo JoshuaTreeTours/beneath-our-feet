@@ -1,0 +1,43 @@
+name: Diagnose Geologic Time Scale Page
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/diagnose-geologic-time-scale-page.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect WordPress REST page and public HTML
+        env:
+          WP_BASE_URL: ${{ secrets.WP_BASE_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import base64, json, os, urllib.parse, urllib.request
+          base=os.environ['WP_BASE_URL'].rstrip('/')
+          token=base64.b64encode(f"{os.environ['WP_USERNAME']}:{os.environ['WP_APP_PASSWORD']}".encode()).decode()
+          h={'Authorization':f'Basic {token}','Accept':'application/json','User-Agent':'BOF-Diagnostic/1.0'}
+          q=urllib.parse.urlencode({'slug':'geologic-time-scale','context':'edit','per_page':10})
+          with urllib.request.urlopen(urllib.request.Request(f'{base}/wp-json/wp/v2/pages?{q}',headers=h),timeout=30) as r:
+              pages=json.load(r)
+          print('PAGES',len(pages))
+          for p in pages:
+              raw=(p.get('content') or {}).get('raw','')
+              print('ID',p.get('id'),'LINK',p.get('link'),'STATUS',p.get('status'))
+              print('RAW_LEN',len(raw),'MARKER', 'corrected-geologic-time-scale-panel' in raw,'CORRECTED_URL', 'geologic-time-scale-corrected' in raw)
+              print('TEMPLATE',p.get('template'),'META',p.get('meta'))
+          PY
+          echo '--- PUBLIC HTML CHECK ---'
+          curl -fsSL --retry 2 --retry-delay 2 'https://beneath-our-feet.com/collections/deep-time/geologic-time-scale/?diag=1' -o /tmp/page.html
+          echo "PUBLIC_BYTES $(wc -c </tmp/page.html)"
+          grep -o 'https://beneath-our-feet.com/wp-content/uploads[^"'"' ]*' /tmp/page.html | grep -E 'geologic-time-scale|source-053' | head -20 || true
+          grep -q 'geologic-time-scale-corrected' /tmp/page.html && echo 'PUBLIC_HAS_CORRECTED yes' || echo 'PUBLIC_HAS_CORRECTED no'
+          grep -q 'source-053.webp' /tmp/page.html && echo 'PUBLIC_HAS_SOURCE053 yes' || echo 'PUBLIC_HAS_SOURCE053 no'
