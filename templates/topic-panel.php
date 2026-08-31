@@ -103,10 +103,5 @@ $parent_id = wp_get_post_parent_id( $page_id );
             <a<?php echo (int) $topic_page->ID === (int) $parent_id ? ' class="is-current"' : ''; ?> href="<?php echo esc_url( get_permalink( $topic_page->ID ) ); ?>"><?php echo esc_html( get_the_title( $topic_page->ID ) ); ?></a>
         <?php endforeach; ?>
     </nav>
-
-    <div class="bof-panel-mobile-nav">
-        <?php if ( $prev_id ) : ?><a href="<?php echo esc_url( get_permalink( $prev_id ) ); ?>">← Previous</a><?php endif; ?>
-        <?php if ( $next_id ) : ?><a href="<?php echo esc_url( get_permalink( $next_id ) ); ?>">Next →</a><?php endif; ?>
-    </div>
 </section>
 <?php get_footer(); ?>
