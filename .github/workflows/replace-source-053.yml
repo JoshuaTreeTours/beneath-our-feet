@@ -1,4 +1,4 @@
-name: Replace source-053 media
+name: Publish corrected geologic time scale panel
 
 on:
   push:
@@ -13,19 +13,19 @@ permissions:
   contents: read
 
 jobs:
-  replace-media:
+  publish-panel:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Rebuild corrected source-053.webp
+      - name: Rebuild corrected panel
         run: |
           cat assets/source-053.part*.b64 > /tmp/source-053.b64
-          base64 --decode /tmp/source-053.b64 > /tmp/source-053.webp
-          test "$(stat -c%s /tmp/source-053.webp)" = "393462"
-          echo "c36ac6896c3f1a861a30bd024b9394498e9f1ce1f8ef3fc7313e043b07bb481d  /tmp/source-053.webp" | sha256sum -c -
+          base64 --decode /tmp/source-053.b64 > /tmp/geologic-time-scale-corrected.webp
+          file /tmp/geologic-time-scale-corrected.webp
+          test -s /tmp/geologic-time-scale-corrected.webp
 
-      - name: Replace WordPress media file at same URL
+      - name: Upload panel and add it to Geologic Time Scale page
         env:
           WP_BASE_URL: ${{ secrets.WP_BASE_URL }}
           WP_USERNAME: ${{ secrets.WP_USERNAME }}
@@ -33,44 +33,78 @@ jobs:
         run: |
           python - <<'PY'
           import base64, json, os, urllib.parse, urllib.request
+
           base = os.environ['WP_BASE_URL'].rstrip('/')
           token = base64.b64encode(f"{os.environ['WP_USERNAME']}:{os.environ['WP_APP_PASSWORD']}".encode()).decode()
-          headers = {'Authorization': f'Basic {token}', 'User-Agent': 'BeneathOurFeet-GitHub-Publisher/1.0', 'Accept': 'application/json'}
+          headers = {
+              'Authorization': f'Basic {token}',
+              'User-Agent': 'BeneathOurFeet-GitHub-Publisher/1.0',
+              'Accept': 'application/json',
+          }
 
-          q = urllib.parse.urlencode({'search':'source-053','per_page':100,'context':'edit'})
-          req = urllib.request.Request(f'{base}/wp-json/wp/v2/media?{q}', headers=headers)
-          with urllib.request.urlopen(req, timeout=30) as r:
-              media = json.load(r)
-
-          target = None
-          for item in media:
-              src = (item.get('source_url') or '').split('?')[0]
-              if src.endswith('/2026/08/source-053.webp') or src.endswith('/source-053.webp'):
-                  target = item
-                  break
-
-          if target:
-              del_req = urllib.request.Request(f"{base}/wp-json/wp/v2/media/{target['id']}?force=true", headers=headers, method='DELETE')
-              with urllib.request.urlopen(del_req, timeout=30) as r:
-                  deleted = json.load(r)
-              print('Deleted old attachment', target['id'])
-          else:
-              print('Exact old attachment not found by REST search; upload will still be attempted.')
-
-          data = open('/tmp/source-053.webp','rb').read()
+          # Upload the newly corrected panel under a unique filename to defeat any old media cache.
+          data = open('/tmp/geologic-time-scale-corrected.webp', 'rb').read()
           up_headers = dict(headers)
           up_headers['Content-Type'] = 'image/webp'
-          up_headers['Content-Disposition'] = 'attachment; filename="source-053.webp"'
+          up_headers['Content-Disposition'] = 'attachment; filename="geologic-time-scale-corrected.webp"'
           up_req = urllib.request.Request(f'{base}/wp-json/wp/v2/media', data=data, headers=up_headers, method='POST')
           with urllib.request.urlopen(up_req, timeout=60) as r:
+              media = json.load(r)
+          media_id = media['id']
+          media_url = media['source_url']
+          print('Uploaded corrected panel:', media_id, media_url)
+
+          # Set useful media metadata.
+          meta_headers = dict(headers)
+          meta_headers['Content-Type'] = 'application/json'
+          meta_payload = json.dumps({
+              'title': 'Geologic Time Scale',
+              'alt_text': 'Illustrated geologic time scale showing the major divisions of Earth history',
+              'caption': 'Geologic Time Scale'
+          }).encode('utf-8')
+          meta_req = urllib.request.Request(f'{base}/wp-json/wp/v2/media/{media_id}', data=meta_payload, headers=meta_headers, method='POST')
+          with urllib.request.urlopen(meta_req, timeout=30) as r:
+              json.load(r)
+
+          # Find the live page.
+          q = urllib.parse.urlencode({'slug':'geologic-time-scale','context':'edit','per_page':10})
+          page_req = urllib.request.Request(f'{base}/wp-json/wp/v2/pages?{q}', headers=headers)
+          with urllib.request.urlopen(page_req, timeout=30) as r:
+              pages = json.load(r)
+          if not pages:
+              raise SystemExit('Geologic Time Scale page not found')
+          page = pages[0]
+          page_id = page['id']
+          content = page['content']['raw']
+
+          marker_start = '<!-- BOF corrected-geologic-time-scale-panel -->'
+          marker_end = '<!-- EOF corrected-geologic-time-scale-panel -->'
+          block = f'''{marker_start}\n<figure class="wp-block-image size-full"><img src="{media_url}" alt="Illustrated geologic time scale showing the major divisions of Earth history" class="wp-image-{media_id}"/></figure>\n{marker_end}'''
+
+          # Replace our prior managed block if present; otherwise add the panel near the top of the page.
+          if marker_start in content and marker_end in content:
+              before = content.split(marker_start,1)[0]
+              after = content.split(marker_end,1)[1]
+              new_content = before + block + after
+          else:
+              # Prefer placing immediately after the first heading; fall back to the start of content.
+              close_h = content.find('</h1>')
+              if close_h == -1:
+                  close_h = content.find('</h2>')
+              if close_h != -1:
+                  close_h += 5
+                  new_content = content[:close_h] + '\n\n' + block + '\n\n' + content[close_h:]
+              else:
+                  new_content = block + '\n\n' + content
+
+          payload = json.dumps({'content': new_content, 'status':'publish'}).encode('utf-8')
+          update_req = urllib.request.Request(f'{base}/wp-json/wp/v2/pages/{page_id}', data=payload, headers=meta_headers, method='POST')
+          with urllib.request.urlopen(update_req, timeout=60) as r:
               result = json.load(r)
-          print('Uploaded attachment', result['id'], result.get('source_url'))
-          src = (result.get('source_url') or '').split('?')[0]
-          if not src.endswith('/2026/08/source-053.webp'):
-              raise SystemExit(f'Unexpected media URL: {src}')
+          print('Updated page:', result['link'])
+          print('Panel URL:', media_url)
           PY
 
-      - name: Verify public image URL
+      - name: Verify page contains corrected panel
         run: |
-          curl -fsSL --retry 3 --retry-delay 3 'https://beneath-our-feet.com/wp-content/uploads/2026/08/source-053.webp?verify=${{ github.sha }}' -o /tmp/live.webp
-          echo "c36ac6896c3f1a861a30bd024b9394498e9f1ce1f8ef3fc7313e043b07bb481d  /tmp/live.webp" | sha256sum -c -
+          curl -fsSL --retry 3 --retry-delay 3 'https://beneath-our-feet.com/collections/deep-time/geologic-time-scale/?verify=${{ github.sha }}' | grep -q 'corrected-geologic-time-scale-panel'
